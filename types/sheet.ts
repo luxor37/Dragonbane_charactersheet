@@ -1,4 +1,4 @@
-export default interface Character {
+export interface Character {
     name: string
     profession: "Hunter" | string
     weakness: string
@@ -111,17 +111,18 @@ export default interface Character {
     companions: Companion[]
 }
 
-interface SecondarySkill {
+export interface SecondarySkill {
     name: string
     check: number
+    description: string
 }
 
-interface Gear {
+export interface Gear {
     name: string
-    qty: number
+    qty?: number
 }
 
-interface Weapon {
+export interface Weapon {
     name: string
     grip: number
     range: number
@@ -130,17 +131,17 @@ interface Weapon {
     damage: Dice
 }
 
-type WeaponFeature = "subtle" | "piercing" | "thrown"
+export type WeaponFeature = "subtle" | "piercing" | "thrown"
 
-type Dice = "d4" | "d6" | "d8" | "d10" | "d12" | "d20"
+export type Dice = "d4" | "d6" | "d8" | "d10" | "d12" | "d20"
 
-interface Ability {
+export interface Ability {
     name: string
     cost: number
     description: string
 }
 
-interface Companion {
+export interface Companion {
     name: string
     health: {
         total: number

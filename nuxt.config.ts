@@ -7,6 +7,7 @@ const appDescription = "Games"
 export default defineNuxtConfig({
   ssr: false,
   devtools: { enabled: false },
+
   app: {
     head: {
       title: `${appTitle}`,
@@ -66,8 +67,6 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
 
-
-
   modules: [
     "@vite-pwa/nuxt",
     '@pinia/nuxt',
@@ -83,6 +82,7 @@ export default defineNuxtConfig({
   },
 
   css: ['~/assets/css/main.css'],
+
   postcss: {
     plugins: {
       'postcss-import': {},
@@ -92,6 +92,9 @@ export default defineNuxtConfig({
     },
   },
 
+  // plugins: [
+  //   '~/plugins/pinia-plugin-persist.client'
+  // ],
   pwa: {
     mode: isDevelopment ? "development" : "production",
     scope: "/",
@@ -145,7 +148,5 @@ export default defineNuxtConfig({
     },
   },
 
-  // plugins: [
-  //   '~/plugins/pinia-plugin-persist.client'
-  // ],
+  compatibilityDate: "2024-11-24",
 })
