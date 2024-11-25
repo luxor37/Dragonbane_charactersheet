@@ -27,7 +27,7 @@ const ageOption = AGES.map((a) => ({
 
 <template>
   <File />
-  <div class="flex flex-row flex-wrap gap-4 mx-10">
+  <div class="flex flex-row flex-wrap md:flex-nowrap gap-4 mx-10">
     <div class="md:w-1/3">
       <div class="grid grid-cols-[auto,auto] items-center gap-2">
         <label class="text-right">Kin:</label>
