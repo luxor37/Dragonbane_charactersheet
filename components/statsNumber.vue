@@ -9,29 +9,24 @@ interface Props {
 const props = defineProps<Props>();
 
 const emits = defineEmits(["update:stat", "update:isCondition"]);
-
-// Local refs for internal reactivity
-const stat = ref<number>(props.stat);
-const isCondition = ref<boolean>(props.isCondition);
-
-// Watch for changes to emit updates back to the parent
-watch(stat, (newValue) => {
-  emits("update:stat", newValue);
-});
-
-watch(isCondition, (newValue) => {
-  emits("update:isCondition", newValue);
-});
 </script>
 
 <template>
   <div class="flex-col text-center">
     <div class="text-3xl font-bold text-center">
-      <NumberInput v-model="stat" width-class="w-14" />
+      <NumberInput
+        v-model="props.stat"
+        width-class="w-14"
+        @update:modelValue="(value) => emits('update:stat', value)"
+      />
     </div>
     <div class="font-bold">{{ props.name }}</div>
     <div class="flex flex-row justify-center align-middle items-center gap-1">
-      {{ props.condition }}:<UCheckbox v-model="isCondition" />
+      {{ props.condition }}:
+      <UCheckbox
+        v-model="props.isCondition"
+        @update:modelValue="(value) => emits('update:isCondition', value)"
+      />
     </div>
   </div>
 </template>

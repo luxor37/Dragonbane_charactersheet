@@ -1,6 +1,8 @@
 export interface Character {
     name: string
-    profession: "Hunter" | string
+    profession: Profession
+    kin: Kin
+    age: Age
     weakness: string
     appearance: string
     stats: {
@@ -131,9 +133,25 @@ export interface Weapon {
     damage: Dice
 }
 
-export type WeaponFeature = "subtle" | "piercing" | "thrown"
+export const KINS = ["Wolfkin", "Human", "Elf"] as const;
 
-export type Dice = "d4" | "d6" | "d8" | "d10" | "d12" | "d20"
+export type Kin = typeof KINS[number];
+
+export const PROFESSIONS = ["Hunter", "Mage", "Warrior"] as const;
+
+export type Profession = typeof PROFESSIONS[number];
+
+export const AGES = ["Young", "Adult", "Old"] as const;
+
+export type Age = typeof AGES[number];
+
+export const WEAPON_FEATURES = ["Subtle", "Piercing", "Thrown"] as const;
+
+export type WeaponFeature = typeof WEAPON_FEATURES[number];
+
+export const DICE_VALUES = ["d4", "d6", "d8", "d10", "d12", "d20"] as const;
+
+export type Dice = typeof DICE_VALUES[number];
 
 export interface Ability {
     name: string

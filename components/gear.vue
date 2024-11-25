@@ -1,175 +1,18 @@
 <script setup lang="ts">
-import type { Character } from "~/types/sheet";
+import {
+  DICE_VALUES,
+  WEAPON_FEATURES,
+  type Weapon,
+  type WeaponFeature,
+} from "~/types/sheet";
 
-const character = ref<Character>({
-  name: "Archer",
-  profession: "Hunter",
-  weakness: "Fire",
-  appearance: "Tall and lean with a scar over the left eye",
-  stats: {
-    strenght: 12,
-    constitution: 10,
-    agility: 14,
-    intelligence: 13,
-    willpower: 11,
-    charisma: 8,
-  },
-  conditions: {
-    exhausted: false,
-    sickly: false,
-    dazed: false,
-    angry: false,
-    scared: false,
-    disheartened: false,
-  },
-  damage_bonus: {
-    strenght: 2,
-    agility: 3,
-  },
-  movement: 30,
-  encumbrance_limit: 60,
-  skills: {
-    utility: {
-      acrobatics: 5,
-      awareness: 4,
-      bartering: 3,
-      beast_lore: 6,
-      bluffing: 2,
-      bushcraft: 5,
-      crafting: 3,
-      evade: 6,
-      healing: 4,
-      hunting_fishing: 6,
-      languages: 3,
-      myths_legends: 3,
-      performance: 2,
-      persuasion: 4,
-      riding: 4,
-      seamanship: 2,
-      sleight_of_hand: 5,
-      sneaking: 5,
-      spot_hidden: 4,
-      swimming: 3,
-    },
-    weapons: {
-      axes: 2,
-      bows: 6,
-      brawling: 3,
-      crossbows: 5,
-      hammers: 1,
-      knives: 4,
-      slings: 2,
-      spears: 3,
-      staves: 2,
-      swords: 4,
-    },
-    secondary: [
-      {
-        name: "Herbalism",
-        check: 12,
-        description: "Knowledge of herbs and their uses for healing or poisons",
-      },
-      {
-        name: "Map Reading",
-        check: 10,
-        description: "Ability to navigate terrain using maps",
-      },
-    ],
-  },
-  inventory: [
-    { name: "Rope", qty: 1 },
-    { name: "Torch", qty: 3 },
-    { name: "Healing Potion", qty: 2 },
-  ],
-  mementos: [{ name: "Lock of Hair" }],
-  tiny_items: [{ name: "Flint" }, { name: "Needle" }],
-  money: {
-    gold: 15,
-    silver: 75,
-    copper: 120,
-  },
-  equipment: {
-    armor: {
-      armor_rating: 6,
-      name: "Chainmail Armor",
-      bane: {
-        sneaking: true,
-        evade: false,
-        acrobatics: false,
-      },
-    },
-    helmet: {
-      armor_rating: 3,
-      name: "Iron Helmet",
-      bane: {
-        awareness: true,
-        ranged_attacks: false,
-      },
-    },
-    weapons: [
-      {
-        name: "Longbow",
-        grip: 2,
-        range: 150,
-        durability: 10,
-        features: ["piercing"],
-        damage: "d8",
-      },
-      {
-        name: "Dagger",
-        grip: 1,
-        range: 5,
-        durability: 8,
-        features: ["subtle", "thrown"],
-        damage: "d4",
-      },
-    ],
-  },
-  willpower: {
-    total: 10,
-    used: 3,
-  },
-  health: {
-    total: 25,
-    used: 5,
-    death_rolls: {
-      successess: 0,
-      failures: 0,
-    },
-  },
-  rests: {
-    round: false,
-    stretch: true,
-  },
-  abilities: [
-    {
-      name: "Eagle Eye",
-      cost: 2,
-      description: "Increased accuracy with ranged weapons",
-    },
-    {
-      name: "Survivor",
-      cost: 3,
-      description: "Resilience against harsh environmental conditions",
-    },
-  ],
-  notes: ["Prefers ranged combat", "Favors traveling light"],
-  companions: [
-    {
-      name: "Shadow",
-      health: {
-        total: 15,
-        remaining: 12,
-      },
-      attack: "d6",
-      awareness: 4,
-      evade: 5,
-      sneaking: 6,
-      movement: 40,
-      notes: ["A loyal wolf with sharp senses and stealth skills"],
-    },
-  ],
-});
+const sheetStore = useSheetStore();
+const { character } = storeToRefs(sheetStore);
+
+const isOpen = ref<boolean>(false);
+const isAddWeapon = ref<boolean>(false);
+const weapon = ref<Weapon | null>(null);
+const editedIndex = ref<number | null>(null);
 
 const columns = [
   {
@@ -202,12 +45,17 @@ const columns = [
     label: "Features",
     sortable: false,
   },
+  {
+    key: "edit",
+    sortable: false,
+  },
 ];
 
 const rows = computed(() =>
   character.value.equipment.weapons.map(
-    ({ name, grip, range, damage, durability, features }) => {
+    ({ name, grip, range, damage, durability, features }, index) => {
       return {
+        index: index,
         weapon: name,
         grip: grip,
         range: `${range} ft`,
@@ -218,11 +66,119 @@ const rows = computed(() =>
     }
   )
 );
+
+interface _WeaponFeature {
+  value: WeaponFeature;
+  label: WeaponFeature;
+}
+const selectedWeaponFeatures = computed({
+  get() {
+    if (!weapon.value) return [];
+    return weaponFeatureOptions.filter((option) =>
+      weapon.value?.features.includes(option.value)
+    );
+  },
+  set(selectedItems) {
+    if (weapon.value) {
+      weapon.value.features = selectedItems.map((item) => item.value);
+    }
+  },
+});
+const weaponFeatureOptions = WEAPON_FEATURES.map(
+  (feature): _WeaponFeature => ({
+    value: feature,
+    label: feature,
+  })
+);
+
+const diceOptions = DICE_VALUES.map((dice) => ({
+  value: dice,
+  label: `1${dice}`,
+}));
+
+const editItem = (index: number) => {
+  editedIndex.value = index;
+  weapon.value = character.value.equipment.weapons[index];
+  isOpen.value = true;
+};
+
+const addItemInit = () => {
+  weapon.value = {
+    name: "Weapon",
+    grip: 1,
+    range: 0,
+    damage: "d4",
+    durability: 0,
+    features: [],
+  } as Weapon;
+  isAddWeapon.value = true;
+  isOpen.value = true;
+};
+
+const deleteWeapon = () => {
+  if (editedIndex.value) {
+    character.value.equipment.weapons.splice(editedIndex.value, 1);
+  }
+  reset();
+};
+
+const addItem = () => {
+  if (weapon.value) {
+    character.value.equipment.weapons.push(weapon.value);
+  }
+  reset();
+};
+
+const saveWeapon = () => {
+  if (!isAddWeapon.value) reset();
+  else addItem();
+};
+
+const reset = () => {
+  editedIndex.value = null;
+  isAddWeapon.value = false;
+  weapon.value = null;
+  isOpen.value = false;
+};
+
+const toggleWillpower = (index: number) => {
+  if (index <= character.value.willpower.used) {
+    // Decrease used points
+    character.value.willpower.used = index - 1;
+  } else {
+    // Increase used points
+    character.value.willpower.used = index;
+  }
+};
+
+const toggleHealth = (index: number) => {
+  if (index <= character.value.health.used) {
+    // Decrease used points
+    character.value.health.used = index - 1;
+  } else {
+    // Increase used points
+    character.value.health.used = index;
+  }
+};
+
+const toggleDeathRoll = (type: "successess" | "failures", index: number) => {
+  if (type === "successess") {
+    // Update successes
+    character.value.health.death_rolls.successess =
+      index <= character.value.health.death_rolls.successess
+        ? index - 1
+        : index;
+  } else if (type === "failures") {
+    // Update failures
+    character.value.health.death_rolls.failures =
+      index <= character.value.health.death_rolls.failures ? index - 1 : index;
+  }
+};
 </script>
 
 <template>
-  <div class="flex flex-row m-auto">
-    <div class="flex flex-col">
+  <div class="flex flex-row m-auto gap-4">
+    <div class="flex flex-col gap-4">
       <div class="flex flex-row">
         <!-- ARMOR -->
         <div class="flex flex-row m-2 gap-2">
@@ -268,13 +224,193 @@ const rows = computed(() =>
           </div>
         </div>
       </div>
-      <div>
-        <UTable :columns="columns" :rows="rows" />
+      <div class="border-2 border-solid rounded-md m-2 gap-2">
+        <UTable :columns="columns" :rows="rows">
+          <template #feat-data="{ row }">
+            <div class="felx flex-col">
+              <div v-for="feat in row.feat" :key="feat">{{ feat }}</div>
+            </div>
+          </template>
+          <template #edit-data="{ row }">
+            <UButton icon="i-mdi-pencil" @click="editItem(row.index)" />
+          </template>
+        </UTable>
+        <hr />
+        <div class="flex flex-row justify-end p-2">
+          <UButton label="Add Item..." @click="addItemInit" />
+        </div>
       </div>
     </div>
-    <div class="flex flex-col">
-      <div>Willpower</div>
-      <div>Hitpoint</div>
+    <div class="flex flex-col gap-4">
+      <div class="flex flex-row gap-4 justify-center">
+        <UCheckbox label="Round Rest" v-model="character.rests.round" />
+        <UCheckbox label="Stretch Rest" v-model="character.rests.stretch" />
+      </div>
+
+      <!-- Willpower -->
+      <div class="flex flex-col gap-2">
+        <div class="font-bold">Willpower Points</div>
+        <div class="flex flex-row gap-2">
+          <div>
+            <div class="border-2 border-solid rounded-xl p-1">
+              <div class="text-lg font-bold">
+                <NumberInput v-model="character.willpower.total" />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-10 gap-1">
+            <template v-for="i in 20" :key="i">
+              <input
+                type="checkbox"
+                :checked="i <= character.willpower.used"
+                :disabled="i > character.willpower.total"
+                @change="toggleWillpower(i)"
+                class="w-6 h-6 cursor-pointer disabled:cursor-not-allowed"
+              />
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hit Points -->
+      <div class="flex flex-col gap-2">
+        <div class="font-bold">Health Points</div>
+        <div class="flex flex-col justify-center">
+          <div class="flex flex-row gap-2">
+            <div>
+              <div class="border-2 border-solid rounded-xl p-1">
+                <div class="text-lg font-bold">
+                  <NumberInput v-model="character.health.total" />
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-10 gap-1">
+              <template v-for="i in 20" :key="i">
+                <input
+                  type="checkbox"
+                  :checked="i <= character.health.used"
+                  :disabled="i > character.health.total"
+                  @change="toggleHealth(i)"
+                  class="w-6 h-6 cursor-pointer disabled:cursor-not-allowed"
+                />
+              </template>
+            </div>
+          </div>
+
+          <!-- Death rolls -->
+          <div class="flex flex-col gap-2 just">
+            <div class="flex flex-row gap-4 items-center justify-center">
+              <div class="font-bold">Death Rolls:</div>
+              <!-- Successes -->
+              <div>
+                <div class="text-center font-bold">Successes</div>
+                <div class="flex gap-2">
+                  <template v-for="i in 3" :key="'success-' + i">
+                    <input
+                      type="checkbox"
+                      :checked="i <= character.health.death_rolls.successess"
+                      @change="toggleDeathRoll('successess', i)"
+                      class="w-6 h-6 cursor-pointer"
+                    />
+                  </template>
+                </div>
+              </div>
+
+              <!-- Failures -->
+              <div>
+                <div class="text-center font-bold">Failures</div>
+                <div class="flex gap-2">
+                  <template v-for="i in 3" :key="'failure-' + i">
+                    <input
+                      type="checkbox"
+                      :checked="i <= character.health.death_rolls.failures"
+                      @change="toggleDeathRoll('failures', i)"
+                      class="w-6 h-6 cursor-pointer"
+                    />
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+  <UModal v-model="isOpen">
+    <UCard
+      :ui="{
+        ring: '',
+        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+      }"
+    >
+      <template #header>
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-semibold leading-6">
+            {{ isAddWeapon ? "Add Weapon" : "Edit Weapon" }}
+          </h3>
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-x-mark-20-solid"
+            class="-my-1"
+            @click="reset"
+          />
+        </div>
+      </template>
+      <div class="flex flex-col gap-2" v-if="weapon">
+        <div class="flex flex-row items-center gap-2">
+          Name: <UInput v-model="weapon.name" placeholder="name" />
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          Grip:
+          <USelect
+            :options="[
+              { value: 1, label: '1' },
+              { value: 2, label: '2' },
+            ]"
+            v-model="weapon.grip"
+          />
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          Range:
+          <UInput type="number" v-model="weapon.range" placeholder="range" />ft
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          Damage:
+          <USelect :options="diceOptions" v-model="weapon.damage" />
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          Durability:
+          <UInput
+            type="number"
+            v-model="weapon.durability"
+            placeholder="range"
+          />
+        </div>
+        <div class="flex flex-row items-center gap-2">
+          Features:
+          <USelectMenu
+            :options="weaponFeatureOptions"
+            v-model="selectedWeaponFeatures"
+            multiple
+            label="Select Features"
+          />
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex flex-row gap-2 justify-end">
+          <UButton @click="saveWeapon" :label="isAddWeapon ? `Add` : `Edit`" />
+          <UButton
+            v-if="!isAddWeapon"
+            @click="deleteWeapon"
+            label="Delete"
+            variant="outline"
+            color="red"
+          />
+        </div>
+      </template>
+    </UCard>
+  </UModal>
 </template>

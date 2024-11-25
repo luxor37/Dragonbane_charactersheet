@@ -1,130 +1,64 @@
 <script setup lang="ts">
-import type { Character } from "~/types/sheet";
+import { marked } from "marked";
 
-const character = ref<Character>({
-  name: "Archer",
-  profession: "Hunter",
-  weakness: "Fire",
-  appearance: "Tall and lean",
-  stats: {
-    strenght: 10,
-    constitution: 8,
-    agility: 12,
-    intelligence: 14,
-    willpower: 11,
-    charisma: 9,
-  },
-  conditions: {
-    exhausted: false,
-    sickly: false,
-    dazed: false,
-    angry: false,
-    scared: false,
-    disheartened: false,
-  },
-  damage_bonus: {
-    strenght: 2,
-    agility: 3,
-  },
-  movement: 30,
-  encumbrance_limit: 50,
-  skills: {
-    utility: {
-      acrobatics: 4,
-      awareness: 3,
-      bartering: 2,
-      beast_lore: 5,
-      bluffing: 1,
-      bushcraft: 4,
-      crafting: 2,
-      evade: 5,
-      healing: 3,
-      hunting_fishing: 4,
-      languages: 3,
-      myths_legends: 2,
-      performance: 1,
-      persuasion: 4,
-      riding: 3,
-      seamanship: 1,
-      sleight_of_hand: 5,
-      sneaking: 4,
-      spot_hidden: 3,
-      swimming: 2,
-    },
-    weapons: {
-      axes: 1,
-      bows: 5,
-      brawling: 2,
-      crossbows: 4,
-      hammers: 1,
-      knives: 3,
-      slings: 2,
-      spears: 3,
-      staves: 2,
-      swords: 4,
-    },
-    secondary: [
-      {
-        name: "Sercellon",
-        check: 11,
-        description: "some desc",
-      },
-    ],
-  },
-  inventory: [],
-  mementos: [],
-  tiny_items: [],
-  money: {
-    gold: 10,
-    silver: 50,
-    copper: 100,
-  },
-  equipment: {
-    armor: {
-      armor_rating: 5,
-      name: "Leather Armor",
-      bane: {
-        sneaking: true,
-        evade: false,
-        acrobatics: false,
-      },
-    },
-    helmet: {
-      armor_rating: 2,
-      name: "Iron Helmet",
-      bane: {
-        awareness: true,
-        ranged_attacks: false,
-      },
-    },
-    weapons: [],
-  },
-  willpower: {
-    total: 10,
-    used: 2,
-  },
-  health: {
-    total: 20,
-    used: 5,
-    death_rolls: {
-      successess: 0,
-      failures: 0,
-    },
-  },
-  rests: {
-    round: true,
-    stretch: false,
-  },
-  abilities: [],
-  notes: [],
-  companions: [],
-});
+const sheetStore = useSheetStore();
+const { character } = storeToRefs(sheetStore);
+
+// Manage secondary skills
+const isSkillModalOpen = ref(false);
+const isEditingSkill = ref(false);
+const skillIndex = ref<number | null>(null);
+const skillForm = ref({ name: "", check: 0, description: "" });
+
+const isDescriptionModalOpen = ref(false);
+const selectedDescription = ref("");
+
+const openSkillModal = (index: number | null = null) => {
+  if (index !== null) {
+    // Edit existing skill
+    isEditingSkill.value = true;
+    skillIndex.value = index;
+    skillForm.value = { ...character.value.skills.secondary[index] };
+  } else {
+    // Add new skill
+    isEditingSkill.value = false;
+    skillForm.value = { name: "", check: 0, description: "" };
+  }
+  isSkillModalOpen.value = true;
+};
+
+const saveSkill = () => {
+  if (isEditingSkill.value && skillIndex.value !== null) {
+    // Update existing skill
+    character.value.skills.secondary[skillIndex.value] = { ...skillForm.value };
+  } else {
+    // Add new skill
+    character.value.skills.secondary.push({ ...skillForm.value });
+  }
+  closeSkillModal();
+};
+
+const deleteSkill = (index: number) => {
+  character.value.skills.secondary.splice(index, 1);
+};
+
+const closeSkillModal = () => {
+  isSkillModalOpen.value = false;
+  skillForm.value = { name: "", check: 0, description: "" };
+  skillIndex.value = null;
+};
+
+const openDescriptionModal = (description: string) => {
+  selectedDescription.value = description;
+  isDescriptionModalOpen.value = true;
+};
 </script>
 
 <template>
   <div class="flex flex-col m-4 border-2 border-solid">
     <div class="font-bold text-xl text-center underline">Skills</div>
     <div class="flex flex-row">
+      <!-- Utility Skills -->
       <div class="flex flex-col m-4">
         <ul>
           <li
@@ -138,6 +72,8 @@ const character = ref<Character>({
           </li>
         </ul>
       </div>
+
+      <!-- Weapon Skills -->
       <div class="flex flex-col m-4">
         <div class="text-md font-bold">Weapons Skills</div>
         <ul>
@@ -151,21 +87,135 @@ const character = ref<Character>({
             {{ skill.charAt(0).toUpperCase() + skill.slice(1) }}
           </li>
         </ul>
+
+        <!-- Secondary Skills -->
         <div class="text-md font-bold mt-4">Secondary Skills</div>
         <ul>
           <li
             v-for="(skill, index) in character.skills.secondary"
             :key="skill.name"
-            class="flex flex-row items-center gap-1"
+            class="flex flex-row items-center gap-2"
           >
-            <UCheckbox />
+            <!-- Skill Check -->
             <NumberInput v-model="character.skills.secondary[index].check" /> :
-            <UTooltip :text="skill.description">
+
+            <!-- Skill Name with Description -->
+            <button
+              class="underline text-blue-500"
+              @click="openDescriptionModal(skill.description)"
+            >
               {{ skill.name.charAt(0).toUpperCase() + skill.name.slice(1) }}
-            </UTooltip>
+            </button>
+
+            <!-- Edit Button -->
+            <UButton
+              icon="i-mdi-pencil"
+              variant="ghost"
+              class="p-0 m-0"
+              @click="openSkillModal(index)"
+            />
+          </li>
+
+          <!-- Add New Skill -->
+          <li class="flex flex-row items-center gap-2">
+            <UButton
+              icon="i-mdi-plus"
+              variant="ghost"
+              @click="openSkillModal()"
+              label="Add Secondary Skill"
+            />
           </li>
         </ul>
       </div>
     </div>
   </div>
+
+  <!-- Secondary Skill Modal -->
+  <UModal v-model="isSkillModalOpen">
+    <UCard>
+      <template #header>
+        <h3 class="text-lg font-bold">
+          {{ isEditingSkill ? "Edit Skill" : "Add Skill" }}
+        </h3>
+      </template>
+      <div class="flex flex-col gap-4">
+        <!-- Name -->
+        <div class="flex flex-row items-center gap-2">
+          <label for="skill-name" class="font-bold">Name:</label>
+          <UInput
+            id="skill-name"
+            type="text"
+            v-model="skillForm.name"
+            placeholder="Skill Name"
+          />
+        </div>
+
+        <!-- Check -->
+        <div class="flex flex-row items-center gap-2">
+          <label for="skill-check" class="font-bold">Check:</label>
+          <NumberInput
+            id="skill-check"
+            v-model="skillForm.check"
+            placeholder="Check"
+            width-class="w-20"
+            :min="0"
+          />
+        </div>
+
+        <!-- Description -->
+        <div class="flex flex-col">
+          <label for="skill-description" class="font-bold">Description:</label>
+          <textarea
+            id="skill-description"
+            v-model="skillForm.description"
+            placeholder="Describe the skill"
+            class="border border-gray-300 rounded-md p-2 w-full"
+          />
+        </div>
+      </div>
+      <template #footer>
+        <div class="flex flex-row gap-2 justify-between">
+          <!-- Delete Button (only in edit mode) -->
+          <UButton
+            v-if="isEditingSkill"
+            label="Delete"
+            variant="outline"
+            color="red"
+            @click="
+              () => {
+                if (skillIndex !== null) deleteSkill(skillIndex);
+                closeSkillModal();
+              }
+            "
+          />
+          <div class="flex flex-row gap-2">
+            <!-- Save and Cancel Buttons -->
+            <UButton label="Save" @click="saveSkill" />
+            <UButton
+              label="Cancel"
+              variant="outline"
+              @click="closeSkillModal"
+            />
+          </div>
+        </div>
+      </template>
+    </UCard>
+  </UModal>
+
+  <!-- Description Modal -->
+  <UModal v-model="isDescriptionModalOpen">
+    <UCard>
+      <template #header>
+        <h3 class="text-lg font-bold">Skill Description</h3>
+      </template>
+      <div class="prose" v-html="marked(selectedDescription)"></div>
+      <template #footer>
+        <UButton
+          label="Close"
+          variant="outline"
+          @click="isDescriptionModalOpen = false"
+        />
+      </template>
+    </UCard>
+  </UModal>
 </template>

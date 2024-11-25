@@ -1,8 +1,8 @@
 import { isDevelopment } from "std-env";
 
-const appTitle = "Games"
+const appTitle = "DragonBane - Sheet"
 
-const appDescription = "Games"
+const appDescription = "Dragon Bane TTRPG - Character Sheet Editor"
 
 export default defineNuxtConfig({
   ssr: false,
@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       title: `${appTitle}`,
       charset: "utf-8",
       htmlAttrs: {
-        lang: "fr",
+        lang: "en",
       },
       viewport: "width=device-width, initial-scale=1",
       meta: [
@@ -21,46 +21,35 @@ export default defineNuxtConfig({
         { name: "theme-color", content: "#ffffff" },
         { name: "msapplication-TileColor", content: "#22c55e" },
 
-        { name: 'description', content: 'Un simple site de recettes maisons.' },
+        { name: 'description', content: 'Dragon Bane TTRPG - Character Sheet Editor.' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
 
         // Open Graph / Facebook meta tags
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'My Cookbook' },
-        { property: 'og:title', content: 'My Cookbook' },
-        { property: 'og:description', content: 'Un simple site de recettes maisons.' },
-        { property: 'og:image', content: 'https://mycookb00k.netlify.app/icons/android-chrome-512x512.png' },
-        { property: 'og:url', content: 'https://mycookb00k.netlify.app/' },
+        { property: 'og:site_name', content: 'Dragon Bane - Sheet' },
+        { property: 'og:title', content: 'Dragon Bane - Sheet' },
+        { property: 'og:description', content: 'Dragon Bane TTRPG - Character Sheet Editor.' },
+        { property: 'og:image', content: 'https://dragonbanesheet.netlify.app/icons/web-app-manifest-512x512.png' },
+        { property: 'og:url', content: 'https://dragonbanesheet.netlify.app/' },
 
         // Twitter Card meta tags
         { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'My Cookbook' },
-        { name: 'twitter:description', content: 'Un simple site de recettes maisons.' },
-        { name: 'twitter:image', content: 'https://mycookb00k.netlify.app/icons/android-chrome-512x512.png' },
+        { name: 'twitter:title', content: 'Dragon Bane - Sheet' },
+        { name: 'twitter:description', content: 'Dragon Bane TTRPG - Character Sheet Editor.' },
+        { name: 'twitter:image', content: 'https://dragonbanesheet.netlify.app/icons/web-app-manifest-512x512.png' },
 
       ],
       link: [
         {
           rel: "icon",
-          href: "/icons/favicon-32x32.png",
-          sizes: "32x32",
-          type: "image/png",
-        },
-        {
-          rel: "icon",
-          href: "/icons/favicon-16x16.png",
-          sizes: "16x16",
+          href: "/icons/favicon-96x96.png",
+          sizes: "96x96",
           type: "image/png",
         },
         {
           rel: "apple-touch-icon",
           href: "/icons/apple-touch-icon.png",
           sizes: "180x180",
-        },
-        {
-          rel: "mask-icon",
-          href: "/icons/safari-pinned-tab.svg",
-          color: "#5bbad5",
         },
       ],
     },
@@ -108,33 +97,15 @@ export default defineNuxtConfig({
       theme_color: "#ffffff",
       icons: [
         {
-          src: "/icons/android-chrome-512x512.png",
+          src: "/icons/web-app-manifest-512x512.png",
           sizes: "512x512",
           type: "image/png",
         },
         {
-          src: "/icons/android-chrome-192x192.png",
+          src: "/icons/web-app-manifest-192x192.png",
           sizes: "192x192",
           type: "image/png",
         },
-      ],
-      screenshots: [
-        {
-          src: "/screenshots/mobile-screenshot.png",
-          sizes: "1125x1951",
-          type: "image/png",
-          label: "Home Screen on Mobile",
-          platform: "mobile",
-          form_factor: "narrow"
-        },
-        {
-          src: "/screenshots/desktop-screenshot.png",
-          sizes: "2880x1524",
-          type: "image/png",
-          label: "Home Screen on Desktop",
-          platform: "web",
-          form_factor: "wide"
-        }
       ],
       start_url: "/",
       display: "fullscreen",

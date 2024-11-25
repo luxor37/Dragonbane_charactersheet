@@ -1,62 +1,60 @@
 <script setup lang="ts">
-const dmg_bonus_str = ref<number>(1);
-const dmg_bonus_agl = ref<number>(1);
-const movement = ref<number>(1);
+const sheetStore = useSheetStore();
+const { character } = storeToRefs(sheetStore);
 </script>
-
 <template>
   <div class="flex flex-col m-4">
     <div class="flex flex-row gap-4 mx-auto">
       <StatsNumber
         name="Strenght"
-        :stat="14"
+        v-model:stat="character.stats.strenght"
         condition="Exhausted"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.exhausted"
       />
       <StatsNumber
         name="Constitution"
-        :stat="14"
+        v-model:stat="character.stats.constitution"
         condition="Sickly"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.sickly"
       />
       <StatsNumber
         name="Agility"
-        :stat="14"
+        v-model:stat="character.stats.agility"
         condition="Dazed"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.dazed"
       />
       <StatsNumber
         name="Intelligence"
-        :stat="14"
+        v-model:stat="character.stats.intelligence"
         condition="Angry"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.angry"
       />
       <StatsNumber
         name="Willpower"
-        :stat="14"
+        v-model:stat="character.stats.willpower"
         condition="Scared"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.scared"
       />
       <StatsNumber
         name="Charisma"
-        :stat="14"
+        v-model:stat="character.stats.charisma"
         condition="Disheartened"
-        :isCondition="true"
+        v-model:isCondition="character.conditions.disheartened"
       />
     </div>
     <div class="flex flex-row gap-4 mt-8 mx-auto">
       <div></div>
       <div class="flex flex-row gap-2">
         <span class="underline font-bold">Damage Bonus Strenght:</span>
-        <NumberInput v-model="dmg_bonus_str" />
+        <NumberInput v-model="character.damage_bonus.strenght" />
       </div>
       <div class="flex flex-row gap-2">
         <span class="underline font-bold">Damage Bonus Agility:</span>
-        <NumberInput v-model="dmg_bonus_agl" />
+        <NumberInput v-model="character.damage_bonus.agility" />
       </div>
       <div class="flex flex-row gap-2">
         <span class="underline font-bold">Movement:</span>
-        <NumberInput v-model="movement" />
+        <NumberInput v-model="character.movement" />
       </div>
       <div></div>
     </div>

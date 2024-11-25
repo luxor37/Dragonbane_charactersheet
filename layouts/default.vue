@@ -8,7 +8,7 @@ onMounted(() => {});
 
 <template>
   <div class="min-h-screen flex flex-col justify-between bg-black">
-    <div class="justify-center flex flex-col max-w-7xl mx-auto w-full bg-white">
+    <div class="justify-center flex flex-col max-w-5xl mx-auto w-full bg-white">
       <slot />
     </div>
     <div class="text-white bg-primary flex flex-col items-center py-4">
