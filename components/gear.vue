@@ -177,9 +177,9 @@ const toggleDeathRoll = (type: "successess" | "failures", index: number) => {
 </script>
 
 <template>
-  <div class="flex flex-row m-auto gap-4">
+  <div class="flex flex-col md:flex-row m-auto gap-4">
     <div class="flex flex-col gap-4">
-      <div class="flex flex-row">
+      <div class="flex flex-col md:flex-row">
         <!-- ARMOR -->
         <div class="flex flex-row m-2 gap-2">
           <ArmorRating v-model="character.equipment.armor.armor_rating" />
@@ -224,7 +224,9 @@ const toggleDeathRoll = (type: "successess" | "failures", index: number) => {
           </div>
         </div>
       </div>
-      <div class="border-2 border-solid rounded-md m-2 gap-2">
+      <div
+        class="border-2 border-solid rounded-md m-2 gap-2 overflow-x-scroll w-screen md:w-full"
+      >
         <UTable :columns="columns" :rows="rows">
           <template #feat-data="{ row }">
             <div class="felx flex-col">

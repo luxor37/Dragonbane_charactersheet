@@ -83,7 +83,7 @@ const cancelEditing = () => {
     <div class="font-bold text-xl text-center underline">Notes</div>
 
     <!-- Notes Grid -->
-    <div class="grid grid-cols-3 gap-4 mt-4">
+    <div class="grid grod-col-1 md:grid-cols-3 gap-4 mt-4">
       <div
         v-for="(note, index) in character.notes"
         :key="note"

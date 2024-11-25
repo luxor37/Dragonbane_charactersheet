@@ -62,7 +62,7 @@ const closeAbilityModal = () => {
       <li
         v-for="(ability, index) in character.abilities"
         :key="ability.name"
-        class="flex flex-row items-center gap-2"
+        class="flex flex-row items-center justify-center md:justify-start gap-2"
       >
         <!-- Ability Display -->
         <button
@@ -82,7 +82,9 @@ const closeAbilityModal = () => {
       </li>
 
       <!-- Add New Ability -->
-      <li class="flex flex-row items-center gap-2">
+      <li
+        class="flex flex-row items-center justify-center md:justify-start gap-2"
+      >
         <UButton
           icon="i-mdi-plus"
           variant="ghost"

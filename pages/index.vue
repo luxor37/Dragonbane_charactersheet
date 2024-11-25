@@ -27,8 +27,8 @@ const ageOption = AGES.map((a) => ({
 
 <template>
   <File />
-  <div class="flex flex-row gap-4 mx-10">
-    <div class="w-1/3">
+  <div class="flex flex-row flex-wrap gap-4 mx-10">
+    <div class="md:w-1/3">
       <div class="grid grid-cols-[auto,auto] items-center gap-2">
         <label class="text-right">Kin:</label>
         <div class="flex flex-row items-center gap-2">
@@ -45,7 +45,7 @@ const ageOption = AGES.map((a) => ({
         <UTextarea v-model="character.weakness" />
       </div>
     </div>
-    <div class="w-1/3 flex flex-col text-center justify-center gap-4">
+    <div class="md:w-1/3 flex flex-col text-center justify-center gap-4">
       <div class="text-5xl font-bold">Dragon Bane</div>
       <div class="text-md flex flex-row justify-center">
         <UInput
@@ -55,7 +55,7 @@ const ageOption = AGES.map((a) => ({
         />
       </div>
     </div>
-    <div class="w-1/3">
+    <div class="md:w-1/3">
       <div class="grid grid-cols-[auto] items-center gap-2">
         <label>Appearance:</label>
         <UTextarea v-model="character.appearance" />
@@ -64,7 +64,7 @@ const ageOption = AGES.map((a) => ({
   </div>
 
   <Stats />
-  <div class="flex flex-row gap-1 mx-auto">
+  <div class="flex flex-col md:flex-row gap-1 mx-auto">
     <Abilities />
     <Skills />
     <Inventory />

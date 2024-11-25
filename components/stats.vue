@@ -4,7 +4,7 @@ const { character } = storeToRefs(sheetStore);
 </script>
 <template>
   <div class="flex flex-col m-4">
-    <div class="flex flex-row gap-4 mx-auto">
+    <div class="flex flex-row gap-4 flex-wrap mx-auto">
       <StatsNumber
         name="Strenght"
         v-model:stat="character.stats.strenght"
@@ -42,7 +42,7 @@ const { character } = storeToRefs(sheetStore);
         v-model:isCondition="character.conditions.disheartened"
       />
     </div>
-    <div class="flex flex-row gap-4 mt-8 mx-auto">
+    <div class="flex flex-col md:flex-row flex-wrap gap-4 mt-8 mx-auto">
       <div></div>
       <div class="flex flex-row gap-2">
         <span class="underline font-bold">Damage Bonus Strenght:</span>

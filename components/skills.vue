@@ -67,8 +67,10 @@ const openDescriptionModal = (description: string) => {
             class="flex flex-row items-center gap-1"
           >
             <UCheckbox />
-            <NumberInput v-model="character.skills.utility[skill]" /> :
-            {{ skill.charAt(0).toUpperCase() + skill.slice(1) }}
+            <NumberInput v-model="character.skills.utility[skill]" />:
+            <div>
+              {{ skill.charAt(0).toUpperCase() + skill.slice(1) }}
+            </div>
           </li>
         </ul>
       </div>
