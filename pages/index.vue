@@ -27,26 +27,36 @@ const ageOption = AGES.map((a) => ({
 
 <template>
   <File />
-  <div class="flex flex-row flex-wrap md:flex-nowrap gap-4 mx-10">
+  <div
+    class="flex flex-row flex-wrap md:flex-nowrap gap-4 mx-10 justify-center"
+  >
     <div class="md:w-1/3">
-      <div class="grid grid-cols-[auto,auto] items-center gap-2">
-        <label class="text-right">Kin:</label>
+      <div class="flex flex-col items-center gap-2">
         <div class="flex flex-row items-center gap-2">
+          <label class="text-right">Kin:</label>
           <USelect :options="kinOptions" v-model="character.kin" />
-
+        </div>
+        <div class="flex flex-row items-center gap-2">
           <label class="text-right">Age:</label>
           <USelect :options="ageOption" v-model="character.age" />
         </div>
 
-        <label class="text-right">Profession:</label>
-        <USelect :options="professionOptions" v-model="character.profession" />
+        <div class="flex flex-row items-center gap-2">
+          <label class="text-right">Profession:</label>
+          <USelect
+            :options="professionOptions"
+            v-model="character.profession"
+          />
+        </div>
 
-        <label class="text-right">Weakness:</label>
-        <UTextarea v-model="character.weakness" />
+        <div>
+          <label class="text-right">Weakness:</label>
+          <UTextarea v-model="character.weakness" placeholder="Weakness" />
+        </div>
       </div>
     </div>
     <div class="md:w-1/3 flex flex-col text-center justify-center gap-4">
-      <div class="text-5xl font-bold">Dragon Bane</div>
+      <div class="text-5xl font-bold hidden md:flex">Dragon Bane</div>
       <div class="text-md flex flex-row justify-center">
         <UInput
           type="text"
@@ -57,8 +67,11 @@ const ageOption = AGES.map((a) => ({
     </div>
     <div class="md:w-1/3">
       <div class="grid grid-cols-[auto] items-center gap-2">
-        <label>Appearance:</label>
-        <UTextarea v-model="character.appearance" />
+        <label class="hidden md:flex">Appearance:</label>
+        <UTextarea
+          v-model="character.appearance"
+          placeholder="Appeareance..."
+        />
       </div>
     </div>
   </div>

@@ -87,38 +87,15 @@ const closeCompanionModal = () => {
   <div class="flex flex-col m-4">
     <div class="font-bold text-xl text-center underline">Companions</div>
 
-    <UTable
-      :columns="[
-        { key: 'name', label: 'Name' },
-        { key: 'health', label: 'Health' },
-        { key: 'attack', label: 'Attack' },
-        { key: 'awareness', label: 'Awareness' },
-        { key: 'evade', label: 'Evade' },
-        { key: 'sneaking', label: 'Sneaking' },
-        { key: 'movement', label: 'Movement' },
-        { key: 'actions', label: '', sortable: false },
-      ]"
-      :rows="
-        character.companions.map((companion, index) => ({
-          name: companion.name,
-          health: `${companion.health.remaining} / ${companion.health.total}`,
-          attack: companion.attack,
-          awareness: companion.awareness,
-          evade: companion.evade,
-          sneaking: companion.sneaking,
-          movement: companion.movement,
-          actions: index,
-        }))
-      "
-    >
-      <template #actions-data="{ row }">
-        <UButton
-          icon="i-mdi-pencil"
-          variant="ghost"
-          @click="openCompanionModal(row.actions)"
-        />
-      </template>
-    </UTable>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      <CardCompanion
+        v-for="(companion, index) in character.companions"
+        :key="companion.name + index"
+        :item="companion"
+        :index="index"
+        @edit="openCompanionModal"
+      />
+    </div>
 
     <!-- Add New Companion Button -->
     <div class="flex justify-end mt-4">

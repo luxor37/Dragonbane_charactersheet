@@ -2,121 +2,214 @@ import { defineStore } from "pinia";
 import { ref, watch } from "vue";
 import type { Character } from "~/types/sheet";
 
+const defaultCharacter: Character = {
+    name: "",
+    profession: "Hunter",
+    kin: "Human",
+    age: "Adult",
+    weakness: "",
+    appearance: "",
+    stats: {
+        strenght: 0,
+        constitution: 0,
+        agility: 0,
+        intelligence: 0,
+        willpower: 0,
+        charisma: 0,
+    },
+    conditions: {
+        exhausted: false,
+        sickly: false,
+        dazed: false,
+        angry: false,
+        scared: false,
+        disheartened: false,
+    },
+    damage_bonus: {
+        strenght: 0,
+        agility: 0,
+    },
+    movement: 0,
+    encumbrance_limit: 0,
+    skills: {
+        utility: {
+            acrobatics: {
+                check: 0,
+                upgrade: false
+            },
+            awareness: {
+                check: 0,
+                upgrade: false
+            },
+            bartering: {
+                check: 0,
+                upgrade: false
+            },
+            beast_lore: {
+                check: 0,
+                upgrade: false
+            },
+            bluffing: {
+                check: 0,
+                upgrade: false
+            },
+            bushcraft: {
+                check: 0,
+                upgrade: false
+            },
+            crafting: {
+                check: 0,
+                upgrade: false
+            },
+            evade: {
+                check: 0,
+                upgrade: false
+            },
+            healing: {
+                check: 0,
+                upgrade: false
+            },
+            hunting_fishing: {
+                check: 0,
+                upgrade: false
+            },
+            languages: {
+                check: 0,
+                upgrade: false
+            },
+            myths_legends: {
+                check: 0,
+                upgrade: false
+            },
+            performance: {
+                check: 0,
+                upgrade: false
+            },
+            persuasion: {
+                check: 0,
+                upgrade: false
+            },
+            riding: {
+                check: 0,
+                upgrade: false
+            },
+            seamanship: {
+                check: 0,
+                upgrade: false
+            },
+            sleight_of_hand: {
+                check: 0,
+                upgrade: false
+            },
+            sneaking: {
+                check: 0,
+                upgrade: false
+            },
+            spot_hidden: {
+                check: 0,
+                upgrade: false
+            },
+            swimming: {
+                check: 0,
+                upgrade: false
+            },
+        },
+        weapons: {
+            axes: {
+                check: 0,
+                upgrade: false
+            },
+            bows: {
+                check: 0,
+                upgrade: false
+            },
+            brawling: {
+                check: 0,
+                upgrade: false
+            },
+            crossbows: {
+                check: 0,
+                upgrade: false
+            },
+            hammers: {
+                check: 0,
+                upgrade: false
+            },
+            knives: {
+                check: 0,
+                upgrade: false
+            },
+            slings: {
+                check: 0,
+                upgrade: false
+            },
+            spears: {
+                check: 0,
+                upgrade: false
+            },
+            staves: {
+                check: 0,
+                upgrade: false
+            },
+            swords: {
+                check: 0,
+                upgrade: false
+            },
+        },
+        secondary: [],
+    },
+    inventory: [],
+    mementos: [],
+    tiny_items: [],
+    money: {
+        gold: 0,
+        silver: 0,
+        copper: 0,
+    },
+    equipment: {
+        armor: {
+            armor_rating: 0,
+            name: "",
+            bane: {
+                sneaking: false,
+                evade: false,
+                acrobatics: false,
+            },
+        },
+        helmet: {
+            armor_rating: 0,
+            name: "",
+            bane: {
+                awareness: false,
+                ranged_attacks: false,
+            },
+        },
+        weapons: [],
+    },
+    willpower: {
+        total: 0,
+        used: 0,
+    },
+    health: {
+        total: 0,
+        used: 0,
+        death_rolls: {
+            successess: 0,
+            failures: 0,
+        },
+    },
+    rests: {
+        round: false,
+        stretch: false,
+    },
+    abilities: [],
+    spells: [],
+    notes: [],
+    companions: [],
+}
+
 export const useSheetStore = defineStore("sheet", () => {
-    const character = ref<Character>({
-        name: "",
-        profession: "Hunter",
-        kin: "Human",
-        age: "Adult",
-        weakness: "",
-        appearance: "",
-        stats: {
-            strenght: 0,
-            constitution: 0,
-            agility: 0,
-            intelligence: 0,
-            willpower: 0,
-            charisma: 0,
-        },
-        conditions: {
-            exhausted: false,
-            sickly: false,
-            dazed: false,
-            angry: false,
-            scared: false,
-            disheartened: false,
-        },
-        damage_bonus: {
-            strenght: 0,
-            agility: 0,
-        },
-        movement: 0,
-        encumbrance_limit: 0,
-        skills: {
-            utility: {
-                acrobatics: 0,
-                awareness: 0,
-                bartering: 0,
-                beast_lore: 0,
-                bluffing: 0,
-                bushcraft: 0,
-                crafting: 0,
-                evade: 0,
-                healing: 0,
-                hunting_fishing: 0,
-                languages: 0,
-                myths_legends: 0,
-                performance: 0,
-                persuasion: 0,
-                riding: 0,
-                seamanship: 0,
-                sleight_of_hand: 0,
-                sneaking: 0,
-                spot_hidden: 0,
-                swimming: 0,
-            },
-            weapons: {
-                axes: 0,
-                bows: 0,
-                brawling: 0,
-                crossbows: 0,
-                hammers: 0,
-                knives: 0,
-                slings: 0,
-                spears: 0,
-                staves: 0,
-                swords: 0,
-            },
-            secondary: [],
-        },
-        inventory: [],
-        mementos: [],
-        tiny_items: [],
-        money: {
-            gold: 0,
-            silver: 0,
-            copper: 0,
-        },
-        equipment: {
-            armor: {
-                armor_rating: 0,
-                name: "",
-                bane: {
-                    sneaking: false,
-                    evade: false,
-                    acrobatics: false,
-                },
-            },
-            helmet: {
-                armor_rating: 0,
-                name: "",
-                bane: {
-                    awareness: false,
-                    ranged_attacks: false,
-                },
-            },
-            weapons: [],
-        },
-        willpower: {
-            total: 0,
-            used: 0,
-        },
-        health: {
-            total: 0,
-            used: 0,
-            death_rolls: {
-                successess: 0,
-                failures: 0,
-            },
-        },
-        rests: {
-            round: false,
-            stretch: false,
-        },
-        abilities: [],
-        notes: [],
-        companions: [],
-    });
+    const character = ref<Character>(defaultCharacter);
 
     // Load character from local storage on initialization
     const loadCharacterFromLocalStorage = () => {
@@ -145,120 +238,7 @@ export const useSheetStore = defineStore("sheet", () => {
 
     const resetCharacter = () => {
         character.value = JSON.parse(
-            JSON.stringify({
-                name: "",
-                profession: "Hunter",
-                kin: "Human",
-                age: "Adult",
-                weakness: "",
-                appearance: "",
-                stats: {
-                    strenght: 0,
-                    constitution: 0,
-                    agility: 0,
-                    intelligence: 0,
-                    willpower: 0,
-                    charisma: 0,
-                },
-                conditions: {
-                    exhausted: false,
-                    sickly: false,
-                    dazed: false,
-                    angry: false,
-                    scared: false,
-                    disheartened: false,
-                },
-                damage_bonus: {
-                    strenght: 0,
-                    agility: 0,
-                },
-                movement: 0,
-                encumbrance_limit: 0,
-                skills: {
-                    utility: {
-                        acrobatics: 0,
-                        awareness: 0,
-                        bartering: 0,
-                        beast_lore: 0,
-                        bluffing: 0,
-                        bushcraft: 0,
-                        crafting: 0,
-                        evade: 0,
-                        healing: 0,
-                        hunting_fishing: 0,
-                        languages: 0,
-                        myths_legends: 0,
-                        performance: 0,
-                        persuasion: 0,
-                        riding: 0,
-                        seamanship: 0,
-                        sleight_of_hand: 0,
-                        sneaking: 0,
-                        spot_hidden: 0,
-                        swimming: 0,
-                    },
-                    weapons: {
-                        axes: 0,
-                        bows: 0,
-                        brawling: 0,
-                        crossbows: 0,
-                        hammers: 0,
-                        knives: 0,
-                        slings: 0,
-                        spears: 0,
-                        staves: 0,
-                        swords: 0,
-                    },
-                    secondary: [],
-                },
-                inventory: [],
-                mementos: [],
-                tiny_items: [],
-                money: {
-                    gold: 0,
-                    silver: 0,
-                    copper: 0,
-                },
-                equipment: {
-                    armor: {
-                        armor_rating: 0,
-                        name: "",
-                        bane: {
-                            sneaking: false,
-                            evade: false,
-                            acrobatics: false,
-                        },
-                    },
-                    helmet: {
-                        armor_rating: 0,
-                        name: "",
-                        bane: {
-                            awareness: false,
-                            ranged_attacks: false,
-                        },
-                    },
-                    weapons: [],
-                },
-                willpower: {
-                    total: 0,
-                    used: 0,
-                },
-                health: {
-                    total: 0,
-                    used: 0,
-                    death_rolls: {
-                        successess: 0,
-                        failures: 0,
-                    },
-                },
-                rests: {
-                    round: false,
-                    stretch: false,
-                },
-                abilities: [],
-                notes: [],
-                companions: [],
-            })
+            JSON.stringify(defaultCharacter)
         );
     };
 

@@ -18,7 +18,7 @@ const handleExport = () => {
 </script>
 
 <template>
-  <div class="flex flex-row gap-4 m-4 items-center">
+  <div class="flex flex-row gap-4 m-4 items-center justify-evenly">
     <!-- Import Button -->
     <div>
       <label
@@ -45,6 +45,8 @@ const handleExport = () => {
         class="bg-green-500 text-white hover:bg-green-600"
       />
     </div>
-    <div>Be sure to export your character before leaving!</div>
+    <div class="md:flex hidden">
+      Be sure to export your character before leaving!
+    </div>
   </div>
 </template>

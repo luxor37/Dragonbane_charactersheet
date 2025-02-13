@@ -1,3 +1,5 @@
+import type { Heroic_ability } from "./heroic_abilities"
+
 export interface Character {
     name: string
     profession: Profession
@@ -29,38 +31,38 @@ export interface Character {
     encumbrance_limit: number
     skills: {
         utility: {
-            acrobatics: number
-            awareness: number
-            bartering: number
-            beast_lore: number
-            bluffing: number
-            bushcraft: number
-            crafting: number
-            evade: number
-            healing: number
-            hunting_fishing: number
-            languages: number
-            myths_legends: number
-            performance: number
-            persuasion: number
-            riding: number
-            seamanship: number
-            sleight_of_hand: number
-            sneaking: number
-            spot_hidden: number
-            swimming: number
+            acrobatics: Skill
+            awareness: Skill
+            bartering: Skill
+            beast_lore: Skill
+            bluffing: Skill
+            bushcraft: Skill
+            crafting: Skill
+            evade: Skill
+            healing: Skill
+            hunting_fishing: Skill
+            languages: Skill
+            myths_legends: Skill
+            performance: Skill
+            persuasion: Skill
+            riding: Skill
+            seamanship: Skill
+            sleight_of_hand: Skill
+            sneaking: Skill
+            spot_hidden: Skill
+            swimming: Skill
         }
         weapons: {
-            axes: number
-            bows: number
-            brawling: number
-            crossbows: number
-            hammers: number
-            knives: number
-            slings: number
-            spears: number
-            staves: number
-            swords: number
+            axes: Skill
+            bows: Skill
+            brawling: Skill
+            crossbows: Skill
+            hammers: Skill
+            knives: Skill
+            slings: Skill
+            spears: Skill
+            staves: Skill
+            swords: Skill
         }
         secondary: SecondarySkill[]
     }
@@ -73,23 +75,8 @@ export interface Character {
         copper: number
     }
     equipment: {
-        armor: {
-            armor_rating: number
-            name: string
-            bane: {
-                sneaking: boolean
-                evade: boolean
-                acrobatics: boolean
-            }
-        }
-        helmet: {
-            armor_rating: number
-            name: string
-            bane: {
-                awareness: boolean
-                ranged_attacks: boolean
-            }
-        }
+        armor: Armor
+        helmet: Helmet
         weapons: Weapon[]
     }
     willpower: {
@@ -108,14 +95,15 @@ export interface Character {
         round: boolean
         stretch: boolean
     }
-    abilities: Ability[]
+    abilities: (Heroic_ability | Ability)[]
+    spells: (Spell)[]
     notes: string[]
     companions: Companion[]
 }
 
 export interface SecondarySkill {
     name: string
-    check: number
+    skill: Skill
     description: string
 }
 
@@ -124,40 +112,86 @@ export interface Gear {
     qty?: number
 }
 
+export interface Armor {
+    armor_rating: number
+    name: string
+    bane: {
+        sneaking: boolean
+        evade: boolean
+        acrobatics: boolean
+    }
+}
+
+export interface Helmet {
+    armor_rating: number
+    name: string
+    bane: {
+        awareness: boolean
+        ranged_attacks: boolean
+    }
+}
+
 export interface Weapon {
     name: string
-    grip: number
+    grip: Grip
     range: number
+    strength?: number
     durability: number
     features: WeaponFeature[]
     damage: Dice
+    dices: number
+    description: string
 }
 
-export const KINS = ["Wolfkin", "Human", "Elf"] as const;
+export interface Skill {
+    check: number
+    upgrade: boolean
+}
 
+export const KINS = ["Wolfkin", "Human", "Elf", "Halfling", "Dwarf", "Mallard"] as const;
 export type Kin = typeof KINS[number];
 
-export const PROFESSIONS = ["Hunter", "Mage", "Warrior"] as const;
+export const GRIPS = ["2 hands", "1 hand"] as const;
+export type Grip = typeof GRIPS[number];
 
+export const PROFESSIONS = ["Hunter", "Mage", "Artisan", "Bard", "Fighter", "Knight", "Mariner", "Merchant", "Scholar", "Thief"] as const;
 export type Profession = typeof PROFESSIONS[number];
 
 export const AGES = ["Young", "Adult", "Old"] as const;
-
 export type Age = typeof AGES[number];
 
 export const WEAPON_FEATURES = ["Subtle", "Piercing", "Thrown"] as const;
-
 export type WeaponFeature = typeof WEAPON_FEATURES[number];
 
 export const DICE_VALUES = ["d4", "d6", "d8", "d10", "d12", "d20"] as const;
-
 export type Dice = typeof DICE_VALUES[number];
 
 export interface Ability {
     name: string
-    cost: number
+    cost?: number
+    description: string
+    requirement?: string
+}
+
+export interface Spell {
+    name: string
+    rank: number
+    prerequisite: string
+    requirement: SpellRequirement[]
+    casting_time: SpellCastingTime
+    range: number | 'Touch' | 'Personal'
+    duration: SpellDuration
     description: string
 }
+
+export const SPELL_REQUIREMENTS = ["Word", "Gesture", "Focus", "Ingredient"] as const;
+export type SpellRequirement = typeof SPELL_REQUIREMENTS[number];
+
+export const SPELL_DURATION = ["Instant", "Round", "Stretch", "Shift", "Concentration", "Permanent"] as const;
+export type SpellDuration = typeof SPELL_DURATION[number];
+
+export const SPELL_CASTING_TIME = ["Action", "Shift", "Stretch", "Reaction"] as const;
+export type SpellCastingTime = typeof SPELL_CASTING_TIME[number];
 
 export interface Companion {
     name: string
@@ -172,3 +206,4 @@ export interface Companion {
     movement: number
     notes: string[]
 }
+

@@ -16,11 +16,11 @@ const newTinyItem = ref("");
     </div>
 
     <!-- Inventory -->
-    <ul class="pl-4">
+    <ul class="pl-4 w-full">
       <li
         v-for="(item, index) in character.inventory"
         :key="item.name"
-        class="list-disc flex flex-row items-center gap-2"
+        class="list-disc flex flex-row items-center justify-between gap-2 w-full"
       >
         <!-- Editable Item Name -->
         <UInput
@@ -29,27 +29,29 @@ const newTinyItem = ref("");
           placeholder="Item Name"
           variant="none"
           color="white"
-          class="w-32"
           :padded="false"
+          class="w-full"
           :ui="{
             placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
           }"
         />
-        <!-- Editable Quantity -->
-        <div class="flex flex-row gap-0">
-          (x<NumberInput v-model="item.qty" :min="0" />)
+        <div class="flex flex-row gap-4">
+          <!-- Editable Quantity -->
+          <div class="flex flex-row gap-0">
+            (x<NumberInput v-model="item.qty" :min="0" />)
+          </div>
+          <!-- Remove Item -->
+          <UButton
+            icon="i-mdi-close"
+            variant="ghost"
+            color="red"
+            class="p-0 m-0"
+            @click="character.inventory.splice(index, 1)"
+          />
         </div>
-        <!-- Remove Item -->
-        <UButton
-          icon="i-mdi-close"
-          variant="ghost"
-          color="red"
-          class="p-0 m-0"
-          @click="character.inventory.splice(index, 1)"
-        />
       </li>
       <!-- Add New Item -->
-      <li class="list-disc flex flex-row items-center gap-2">
+      <li class="list-disc flex flex-row items-center justify-between gap-2">
         <UInput
           type="text"
           :padded="false"
@@ -58,38 +60,40 @@ const newTinyItem = ref("");
           variant="none"
           color="white"
           padding="px-0 py-0"
-          class="w-32"
+          class="w-full"
           :ui="{
             placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
           }"
         />
-        <div class="flex flex-row gap-0">
-          (x<NumberInput v-model="newItem.qty" :min="0" />)
-        </div>
-        <UButton
-          icon="i-mdi-plus"
-          variant="ghost"
-          class="p-0 m-0"
-          @click="
-            () => {
-              if (newItem.name) {
-                character.inventory.push({ ...newItem });
-                newItem.name = '';
-                newItem.qty = 0;
+        <div class="flex flex-row gap-4">
+          <div class="flex flex-row gap-0">
+            (x<NumberInput v-model="newItem.qty" :min="0" />)
+          </div>
+          <UButton
+            icon="i-mdi-plus"
+            variant="ghost"
+            class="p-0 m-0"
+            @click="
+              () => {
+                if (newItem.name) {
+                  character.inventory.push({ ...newItem });
+                  newItem.name = '';
+                  newItem.qty = 0;
+                }
               }
-            }
-          "
-        />
+            "
+          />
+        </div>
       </li>
     </ul>
 
     <!-- Mementos -->
     <div class="font-bold mt-4">Memento</div>
-    <ul class="pl-4">
+    <ul class="pl-4 w-full">
       <li
         v-for="(item, index) in character.mementos"
         :key="item.name"
-        class="list-disc flex flex-row items-center gap-2"
+        class="list-disc flex flex-row items-center justify-between gap-2"
       >
         <!-- Editable Memento Name -->
         <UInput
@@ -98,6 +102,7 @@ const newTinyItem = ref("");
           placeholder="Memento Name"
           variant="none"
           color="white"
+          class="w-full"
           :padded="false"
           :ui="{
             placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
@@ -113,7 +118,7 @@ const newTinyItem = ref("");
         />
       </li>
       <!-- Add New Memento -->
-      <li class="list-disc flex flex-row items-center gap-2">
+      <li class="list-disc flex flex-row items-center justify-between gap-2">
         <UInput
           type="text"
           v-model="newMemento"
@@ -121,6 +126,7 @@ const newTinyItem = ref("");
           variant="none"
           color="white"
           :padded="false"
+          class="w-full"
           :ui="{
             placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
           }"
@@ -144,11 +150,11 @@ const newTinyItem = ref("");
     <!-- Tiny Items -->
     <div class="border-2 border-solid mt-4 p-2">
       <div class="font-bold">Tiny Items</div>
-      <ul>
+      <ul class="w-full">
         <li
           v-for="(item, index) in character.tiny_items"
           :key="item.name"
-          class="list-disc flex flex-row items-center gap-2"
+          class="list-disc flex flex-row items-center justify-between gap-2"
         >
           <!-- Editable Tiny Item Name -->
           <UInput
@@ -158,6 +164,7 @@ const newTinyItem = ref("");
             variant="none"
             color="white"
             :padded="false"
+            class="w-full"
             :ui="{
               placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',
             }"
@@ -172,13 +179,14 @@ const newTinyItem = ref("");
           />
         </li>
         <!-- Add New Tiny Item -->
-        <li class="list-disc flex flex-row items-center gap-2">
+        <li class="list-disc flex flex-row items-center justify-between gap-2">
           <UInput
             type="text"
             v-model="newTinyItem"
             placeholder="New Tiny Item"
             variant="none"
             color="white"
+            class="w-full"
             :padded="false"
             :ui="{
               placeholder: 'placeholder-gray-400 dark:placeholder-gray-500',

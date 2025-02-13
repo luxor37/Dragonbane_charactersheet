@@ -8,7 +8,11 @@ const { character } = storeToRefs(sheetStore);
 const isSkillModalOpen = ref(false);
 const isEditingSkill = ref(false);
 const skillIndex = ref<number | null>(null);
-const skillForm = ref({ name: "", check: 0, description: "" });
+const skillForm = ref({
+  name: "",
+  skill: { check: 0, upgrade: false },
+  description: "",
+});
 
 const isDescriptionModalOpen = ref(false);
 const selectedDescription = ref("");
@@ -22,7 +26,11 @@ const openSkillModal = (index: number | null = null) => {
   } else {
     // Add new skill
     isEditingSkill.value = false;
-    skillForm.value = { name: "", check: 0, description: "" };
+    skillForm.value = {
+      name: "",
+      skill: { check: 0, upgrade: false },
+      description: "",
+    };
   }
   isSkillModalOpen.value = true;
 };
@@ -44,7 +52,11 @@ const deleteSkill = (index: number) => {
 
 const closeSkillModal = () => {
   isSkillModalOpen.value = false;
-  skillForm.value = { name: "", check: 0, description: "" };
+  skillForm.value = {
+    name: "",
+    skill: { check: 0, upgrade: false },
+    description: "",
+  };
   skillIndex.value = null;
 };
 
@@ -66,8 +78,8 @@ const openDescriptionModal = (description: string) => {
             :key="skill"
             class="flex flex-row items-center gap-1"
           >
-            <UCheckbox />
-            <NumberInput v-model="character.skills.utility[skill]" />:
+            <UCheckbox v-model="character.skills.utility[skill].upgrade" />
+            <NumberInput v-model="character.skills.utility[skill].check" />:
             <div>
               {{ skill.charAt(0).toUpperCase() + skill.slice(1) }}
             </div>
@@ -84,8 +96,8 @@ const openDescriptionModal = (description: string) => {
             :key="skill"
             class="flex flex-row items-center gap-1"
           >
-            <UCheckbox />
-            <NumberInput v-model="character.skills.weapons[skill]" /> :
+            <UCheckbox v-model="character.skills.weapons[skill].upgrade" />
+            <NumberInput v-model="character.skills.weapons[skill].check" /> :
             {{ skill.charAt(0).toUpperCase() + skill.slice(1) }}
           </li>
         </ul>
@@ -99,7 +111,13 @@ const openDescriptionModal = (description: string) => {
             class="flex flex-row items-center gap-2"
           >
             <!-- Skill Check -->
-            <NumberInput v-model="character.skills.secondary[index].check" /> :
+            <UCheckbox
+              v-model="character.skills.secondary[index].skill.upgrade"
+            />
+            <NumberInput
+              v-model="character.skills.secondary[index].skill.check"
+            />
+            :
 
             <!-- Skill Name with Description -->
             <button
@@ -157,7 +175,7 @@ const openDescriptionModal = (description: string) => {
           <label for="skill-check" class="font-bold">Check:</label>
           <NumberInput
             id="skill-check"
-            v-model="skillForm.check"
+            v-model="skillForm.skill.check"
             placeholder="Check"
             width-class="w-20"
             :min="0"
@@ -167,11 +185,11 @@ const openDescriptionModal = (description: string) => {
         <!-- Description -->
         <div class="flex flex-col">
           <label for="skill-description" class="font-bold">Description:</label>
-          <textarea
+          <UTextarea
             id="skill-description"
             v-model="skillForm.description"
             placeholder="Describe the skill"
-            class="border border-gray-300 rounded-md p-2 w-full"
+            :rows="20"
           />
         </div>
       </div>
