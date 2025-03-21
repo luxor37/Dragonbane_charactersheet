@@ -1284,6 +1284,22 @@
     semver "^7.3.5"
     tar "^6.1.11"
 
+"@maxim_mazurok/gapi.client.discovery-v1@latest":
+  version "0.1.20200806"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.discovery-v1/-/gapi.client.discovery-v1-0.1.20200806.tgz#1bdb82fadd659a159765178993dff6dbcb5968bc"
+  integrity sha512-Wl6UfmZVDdWbY3PUu8E2ULk9RPLjnMqp/iOA4tcK8Ne+U/GmlnWP/e34IaZNGArfl7iXJNOG+/3Rj9L9jQyF9Q==
+  dependencies:
+    "@types/gapi.client" "*"
+    "@types/gapi.client.discovery-v1" "*"
+
+"@maxim_mazurok/gapi.client.drive-v3@latest":
+  version "0.0.20250306"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.drive-v3/-/gapi.client.drive-v3-0.0.20250306.tgz#3c1fc69ac2441cfcc6ca851254650e96def401ae"
+  integrity sha512-blwOqFkUpI3UTcudVg2BJ+l2O/C5KU/dyeDmLlUUKW3vzvCdJ9kZpqPy2pvzVOiYlqJUXDRCO/O7rDUCdNPINQ==
+  dependencies:
+    "@types/gapi.client" "*"
+    "@types/gapi.client.discovery-v1" "*"
+
 "@netlify/functions@^2.8.2":
   version "2.8.2"
   resolved "https://registry.npmjs.org/@netlify/functions/-/functions-2.8.2.tgz"
@@ -1998,6 +2014,37 @@
   version "0.0.39"
   resolved "https://registry.npmjs.org/@types/estree/-/estree-0.0.39.tgz"
   integrity sha512-EYNwp3bU+98cpU4lAWYYL7Zz+2gryWH1qbdDTidVd6hkiR6weksdbMadyXKXNPEkQFhXM+hVO9ZygomHXp+AIw==
+
+"@types/gapi.auth2@^0.0.61":
+  version "0.0.61"
+  resolved "https://registry.npmjs.org/@types/gapi.auth2/-/gapi.auth2-0.0.61.tgz"
+  integrity sha512-cn+omiRoE/LTxZncnVl1QhcLggOT0sJ8Yz9RXIsw5R2zLyRf+0o6kaZzJ/Gr3Sxz6i7J/+PbXAF8yeZipCaiWw==
+  dependencies:
+    "@types/gapi" "*"
+
+"@types/gapi.client.discovery-v1@*":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.discovery-v1/-/gapi.client.discovery-v1-0.0.4.tgz#92818a15931430751ed50d2381d0081fd0cefc20"
+  integrity sha512-uevhRumNE65F5mf2gABLaReOmbFSXONuzFZjNR3dYv6BmkHg+wciubHrfBAsp3554zNo3Dcg6dUAlwMqQfpwjQ==
+  dependencies:
+    "@maxim_mazurok/gapi.client.discovery-v1" latest
+
+"@types/gapi.client.drive@^3.0.15":
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.drive/-/gapi.client.drive-3.0.15.tgz#4c93f2335ccb53fa4032d8971e8d14e3a5a37783"
+  integrity sha512-qEfI0LxUBadOLmym4FkaNGpI4ibBCBPJHiUFWKIv0GIp7yKT2d+wztJYKr9giIRecErUCF+jGSDw1fzTZ6hPVQ==
+  dependencies:
+    "@maxim_mazurok/gapi.client.drive-v3" latest
+
+"@types/gapi.client@*":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client/-/gapi.client-1.0.8.tgz#8e02c57493b014521f2fa3359166c01dc2861cd7"
+  integrity sha512-qJQUmmumbYym3Amax0S8CVzuSngcXsC1fJdwRS2zeW5lM63zXkw4wJFP+bG0jzgi0R6EsJKoHnGNVTDbOyG1ng==
+
+"@types/gapi@*", "@types/gapi@^0.0.47":
+  version "0.0.47"
+  resolved "https://registry.npmjs.org/@types/gapi/-/gapi-0.0.47.tgz"
+  integrity sha512-/ZsLuq6BffMgbKMtZyDZ8vwQvTyKhKQ1G2K6VyWCgtHHhfSSXbk4+4JwImZiTjWNXfI2q1ZStAwFFHSkNoTkHA==
 
 "@types/http-proxy@^1.17.15":
   version "1.17.15"
@@ -7210,7 +7257,7 @@ typed-array-length@^1.0.6:
 
 typescript@^5.7.3:
   version "5.7.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.7.3.tgz#919b44a7dbb8583a9b856d162be24a54bf80073e"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-5.7.3.tgz"
   integrity sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==
 
 ufo@^1.1.2, ufo@^1.5.4:

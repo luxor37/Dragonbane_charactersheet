@@ -7,6 +7,7 @@ const { character } = storeToRefs(sheetStore);
 
 definePageMeta({
   colorMode: "light",
+  middleware: "auth",
 });
 
 const professionOptions = PROFESSIONS.map((prof) => ({
@@ -26,7 +27,10 @@ const ageOption = AGES.map((a) => ({
 </script>
 
 <template>
-  <File />
+  <GoogleAuthModal />
+
+  <DriveFileManager />
+  <!-- <File /> -->
   <div
     class="flex flex-row flex-wrap md:flex-nowrap gap-4 mx-10 justify-center"
   >

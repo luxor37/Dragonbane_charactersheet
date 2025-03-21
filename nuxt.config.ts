@@ -56,6 +56,12 @@ export default defineNuxtConfig({
     pageTransition: { name: "page", mode: "out-in" },
   },
 
+  runtimeConfig: {
+    public: {
+      googleClientId: process.env.GOOGLE_CLIENT_ID
+    }
+  },
+
   modules: [
     "@vite-pwa/nuxt",
     '@pinia/nuxt',
@@ -81,9 +87,8 @@ export default defineNuxtConfig({
     },
   },
 
-  // plugins: [
-  //   '~/plugins/pinia-plugin-persist.client'
-  // ],
+  plugins: [{ src: '~/plugins/gapi.client.ts', mode: 'client' }],
+
   pwa: {
     mode: isDevelopment ? "development" : "production",
     scope: "/",
