@@ -1,26 +1,23 @@
 // composables/useGapiClient.ts
 import { waitForGapi } from "./useGapiLoader";
+import { useRuntimeConfig } from "#imports";
 
 let initPromise: Promise<void> | null = null;
 
 export async function initGapiClient(): Promise<void> {
-    if (initPromise) {
-        return initPromise;
-    }
+    if (initPromise) return initPromise;
+
     initPromise = new Promise(async (resolve, reject) => {
         try {
             const gapiInstance = await waitForGapi();
-            gapiInstance.load("client:auth2", async () => {
+            gapiInstance.load("client", async () => {
                 try {
-                    // Get runtime config for the client ID
                     const config = useRuntimeConfig();
-                    const clientId = config.public.googleClientId;
                     await gapiInstance.client.init({
-                        clientId,
-                        scope: "https://www.googleapis.com/auth/drive.file",
+                        apiKey: config.public.googleApiKey,
+                        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
                     });
-                    // Now explicitly load the Drive API (v3)
-                    await gapiInstance.client.load("drive", "v3");
+                    // No OAuth parameters here; OAuth is handled via GIS.
                     resolve();
                 } catch (error) {
                     reject(error);

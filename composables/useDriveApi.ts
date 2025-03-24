@@ -2,21 +2,34 @@
 import type { Character } from "~/types/sheet";
 import { waitForGapi } from "./useGapiLoader";
 import { initGapiClient } from "./useGapiClient";
+import { useGoogleAuth } from "./useGoogleAuth";
 
 export function useDriveApi() {
+    const { accessToken } = useGoogleAuth();
+
     const createCharacterFile = async (
         characterData: Character
     ): Promise<string | undefined> => {
         await initGapiClient();
         const gapiInstance = await waitForGapi();
+
+        if (!accessToken.value) {
+            throw new Error("User is not authenticated");
+        }
+        // Set the OAuth token on the gapi client for authorization.
+        gapiInstance.client.setToken({ access_token: accessToken.value });
+
+        // Build file metadata
         const fileMetadata = {
             name: `${characterData.name || "character"}.dragonborn.json`,
             mimeType: "application/json",
         };
 
+        // Convert character data to JSON string.
+        const fileContent = JSON.stringify(characterData, null, 2);
         const media = {
             mimeType: "application/json",
-            body: JSON.stringify(characterData, null, 2),
+            body: fileContent,
         };
 
         try {
@@ -24,6 +37,13 @@ export function useDriveApi() {
                 resource: fileMetadata,
                 media: media,
                 fields: "id",
+                name: fileMetadata.name + '.dragonborn.json',
+                contentHints: {
+                    thumbnail: {
+                        mimeType: 'application/json'
+                    }
+                },
+                params: { uploadType: "media" }
             });
             console.log("File created with ID:", response.result.id);
             return response.result.id;
@@ -39,15 +59,23 @@ export function useDriveApi() {
     ): Promise<any> => {
         await initGapiClient();
         const gapiInstance = await waitForGapi();
+
+        if (!accessToken.value) {
+            throw new Error("User is not authenticated");
+        }
+        gapiInstance.client.setToken({ access_token: accessToken.value });
+
+        const fileContent = JSON.stringify(characterData, null, 2);
         const media = {
             mimeType: "application/json",
-            body: JSON.stringify(characterData, null, 2),
+            body: fileContent,
         };
 
         try {
             const response = await gapiInstance.client.drive.files.update({
                 fileId,
                 media: media,
+                params: { uploadType: "multipart" }
             });
             console.log("File updated:", response);
             return response;
@@ -57,9 +85,16 @@ export function useDriveApi() {
         }
     };
 
-    const listCharacterFiles = async (): Promise<Array<{ id: string; name: string }> | undefined> => {
+    const listCharacterFiles = async (): Promise<
+        Array<{ id: string; name: string }> | undefined
+    > => {
         await initGapiClient();
         const gapiInstance = await waitForGapi();
+
+        if (!accessToken.value) {
+            throw new Error("User is not authenticated");
+        }
+        gapiInstance.client.setToken({ access_token: accessToken.value });
         const query = "name contains '.dragonborn.json'";
         try {
             const response = await gapiInstance.client.drive.files.list({
@@ -78,6 +113,11 @@ export function useDriveApi() {
     ): Promise<Character | undefined> => {
         await initGapiClient();
         const gapiInstance = await waitForGapi();
+
+        if (!accessToken.value) {
+            throw new Error("User is not authenticated");
+        }
+        gapiInstance.client.setToken({ access_token: accessToken.value });
         try {
             const response = await gapiInstance.client.drive.files.get({
                 fileId,
@@ -91,5 +131,10 @@ export function useDriveApi() {
         }
     };
 
-    return { createCharacterFile, updateCharacterFile, listCharacterFiles, readCharacterFile };
+    return {
+        createCharacterFile,
+        updateCharacterFile,
+        listCharacterFiles,
+        readCharacterFile,
+    };
 }

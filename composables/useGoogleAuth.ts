@@ -1,44 +1,40 @@
-export interface UserProfile {
-    getId: () => string;
-    getName: () => string;
-    getEmail: () => string;
-    getImageUrl: () => string;
-}
-
 export function useGoogleAuth() {
-    const isAuthenticated = ref<boolean>(false);
-    const userProfile = ref<UserProfile | null>(null);
-    const authStore = useAuthStore();
+    const isAuthenticated = ref(false);
+    let tokenClient: google.accounts.oauth2.TokenClient | null = null;
 
-    const signIn = async (): Promise<void> => {
-        try {
-            await initGapiClient();
-            const gapiInstance = await waitForGapi();
-            const GoogleAuth: gapi.auth2.GoogleAuth = gapiInstance.auth2.getAuthInstance();
-            const user: gapi.auth2.GoogleUser = await GoogleAuth.signIn();
-            isAuthenticated.value = true;
-            userProfile.value = user.getBasicProfile();
-            // Hide the modal on successful sign-in
-            authStore.showAuthModal = false;
-        } catch (error) {
-            console.error("Error during sign-in:", error);
-        }
+    const authStore = useAuthStore()
+    const { showAuthModal, accessToken } = storeToRefs(authStore)
+
+    // Initialize the token client (runs only once)
+    const initTokenClient = () => {
+        const config = useRuntimeConfig();
+        tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: config.public.googleClientId,
+            scope: 'https://www.googleapis.com/auth/drive.file',
+            callback: (response: any) => {
+                if (response.error) {
+                    console.error('Error obtaining token:', response);
+                    return;
+                }
+                accessToken.value = response.access_token;
+                isAuthenticated.value = true;
+                showAuthModal.value = false
+            },
+        });
     };
 
-    const signOut = async (): Promise<void> => {
-        try {
-            await initGapiClient();
-            const gapiInstance = await waitForGapi();
-            const GoogleAuth: gapi.auth2.GoogleAuth = gapiInstance.auth2.getAuthInstance();
-            await GoogleAuth.signOut();
-            isAuthenticated.value = false;
-            userProfile.value = null;
-            // Optionally re-show the modal when signed out
-            authStore.showAuthModal = true;
-        } catch (error) {
-            console.error("Error during sign-out:", error);
+    const signIn = async () => {
+        if (!tokenClient) {
+            initTokenClient();
         }
+        tokenClient!.requestAccessToken();
     };
 
-    return { isAuthenticated, userProfile, signIn, signOut };
+    const signOut = async () => {
+        // The new library doesn’t offer a built‑in sign‑out; clear your stored token instead.
+        accessToken.value = null;
+        isAuthenticated.value = false;
+    };
+
+    return { isAuthenticated, accessToken, signIn, signOut };
 }

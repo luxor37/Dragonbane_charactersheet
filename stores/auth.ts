@@ -4,5 +4,6 @@ import { ref } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
     const showAuthModal = ref(false);
-    return { showAuthModal };
+    const accessToken = ref<string | null>(null);
+    return { showAuthModal, accessToken };
 });

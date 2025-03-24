@@ -58,7 +58,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      googleClientId: process.env.GOOGLE_CLIENT_ID
+      googleClientId: process.env.GOOGLE_CLIENT_ID || 'YOUR_DEFAULT_CLIENT_ID',
+      googleApiKey: process.env.GOOGLE_API_KEY || 'YOUR_DEFAULT_API_KEY'
     }
   },
 
@@ -87,7 +88,10 @@ export default defineNuxtConfig({
     },
   },
 
-  plugins: [{ src: '~/plugins/gapi.client.ts', mode: 'client' }],
+  plugins: [
+    { src: '~/plugins/gapi.client.ts', mode: 'client' },
+    { src: '~/plugins/gsi.client.ts', mode: 'client' }
+  ],
 
   pwa: {
     mode: isDevelopment ? "development" : "production",
