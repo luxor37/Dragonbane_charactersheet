@@ -1,4 +1,7 @@
 <script setup lang="ts">
+const authStore = useAuthStore();
+const { accessToken } = storeToRefs(authStore);
+
 const sheetStore = useSheetStore();
 const { character, fileId } = storeToRefs(sheetStore);
 const {
@@ -36,7 +39,7 @@ const handleSaveAsConfirm = async () => {
   const _fileId = await createCharacterFile(character.value);
   if (_fileId) {
     fileId.value = _fileId;
-    alert(`File saved as ${fileName}.dragonborn.json`);
+    alert(`File saved as ${fileName}.dragonbane.json`);
   }
   showSaveAsModal.value = false;
 };
@@ -46,7 +49,7 @@ const openLoadModal = async () => {
   const listedFiles = await listCharacterFiles();
   if (listedFiles) {
     files.value = listedFiles.filter((file) =>
-      file.name.endsWith(".dragonborn.json")
+      file.name.endsWith(".dragonbane.json")
     );
   }
 };
@@ -63,12 +66,8 @@ const handleLoadFile = async (_fileId: string) => {
   showLoadModal.value = false;
 };
 
-const handleLogout = async () => {
+const handleRestart = async () => {
   await signOut();
-  alert("Logged out!");
-};
-
-const handleRestart = () => {
   localStorage.clear();
   window.location.reload();
 };
@@ -87,7 +86,11 @@ const handleRestart = () => {
     <UButton
       label="Save As..."
       icon="i-mdi-content-save-outline"
-      @click="() => (showSaveAsModal = true)"
+      @click="
+        () => {
+          showSaveAsModal = true;
+        }
+      "
       class="bg-blue-500 hover:bg-blue-600 text-white"
     />
     <!-- Load -->
@@ -97,19 +100,12 @@ const handleRestart = () => {
       @click="openLoadModal"
       class="bg-blue-500 hover:bg-blue-600 text-white"
     />
-    <!-- Logout -->
     <UButton
-      label="Logout"
+      v-if="accessToken !== null"
+      :label="`Logout`"
       icon="i-mdi-logout"
-      @click="handleLogout"
-      class="bg-red-500 hover:bg-red-600 text-white"
-    />
-    <!-- Restart -->
-    <UButton
-      label="Restart"
-      icon="i-mdi-restart"
       @click="handleRestart"
-      class="bg-yellow-500 hover:bg-yellow-600 text-white"
+      class="bg-red-500 hover:bg-red-600 text-white"
     />
   </div>
 
@@ -156,7 +152,7 @@ const handleRestart = () => {
         <template #header>
           <h3 class="text-xl font-bold">Load Character</h3>
         </template>
-        <ul class="divide-y divide-gray-200">
+        <ul class="divide-y divide-gray-200" v-if="files.length > 0">
           <li
             v-for="file in files"
             :key="file.id"
@@ -166,6 +162,7 @@ const handleRestart = () => {
             <UButton label="Load" size="sm" @click="handleLoadFile(file.id)" />
           </li>
         </ul>
+        <div v-else>No '.dragonbane.json' detected</div>
         <template #footer>
           <div class="flex justify-end">
             <UButton

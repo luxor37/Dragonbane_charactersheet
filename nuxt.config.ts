@@ -68,8 +68,13 @@ export default defineNuxtConfig({
   modules: [
     "@vite-pwa/nuxt",
     '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
     '@nuxt/ui'
   ],
+
+  pinia: {
+    storesDirs: ['./stores/**'],
+  },
 
   // colorMode: {
   //   preference: 'light'

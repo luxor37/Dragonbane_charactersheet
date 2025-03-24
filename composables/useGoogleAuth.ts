@@ -1,9 +1,8 @@
 export function useGoogleAuth() {
-    const isAuthenticated = ref(false);
     let tokenClient: google.accounts.oauth2.TokenClient | null = null;
 
     const authStore = useAuthStore()
-    const { showAuthModal, accessToken } = storeToRefs(authStore)
+    const { isAuthenticated, accessToken } = storeToRefs(authStore)
 
     // Initialize the token client (runs only once)
     const initTokenClient = () => {
@@ -18,7 +17,6 @@ export function useGoogleAuth() {
                 }
                 accessToken.value = response.access_token;
                 isAuthenticated.value = true;
-                showAuthModal.value = false
             },
         });
     };
@@ -36,5 +34,5 @@ export function useGoogleAuth() {
         isAuthenticated.value = false;
     };
 
-    return { isAuthenticated, accessToken, signIn, signOut };
+    return { accessToken, signIn, signOut };
 }

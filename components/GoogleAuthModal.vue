@@ -1,23 +1,20 @@
 <script setup lang="ts">
 const { signIn } = useGoogleAuth();
 const authStore = useAuthStore();
-const { showAuthModal } = storeToRefs(authStore);
+const { isAuthenticated, accessToken } = storeToRefs(authStore);
 
-watch(
-  () => showAuthModal.value,
-  (newVal) => {
-    showAuthModal.value = newVal;
-  }
-);
+const showModal = ref<boolean>(!isAuthenticated.value);
 
 const handleSignIn = async () => {
   await signIn();
+  showModal.value = false;
 };
 </script>
 
 <template>
   <UModal
-    v-model:open="showAuthModal"
+    v-if="accessToken === null"
+    v-model:open="showModal"
     closeable
     overlay-class="bg-black/50"
     class="max-w-md mx-auto"

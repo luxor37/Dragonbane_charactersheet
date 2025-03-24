@@ -24,7 +24,7 @@
     <p class="mb-2">
       Our App stores your character sheet locally (via browser local storage)
       and, with your permission, on your personal Google Drive account as a JSON
-      file (with a custom extension such as “.dragonborn.json”). No character
+      file (with a custom extension such as “.dragonbane.json”). No character
       sheet data is stored on our servers.
     </p>
     <h3 class="text-xl font-semibold mt-4">c. Technical Data</h3>

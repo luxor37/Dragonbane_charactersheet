@@ -56,7 +56,7 @@ export const useSheetStore = defineStore("sheet", () => {
         const blob = new Blob([json], { type: "application/json" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `${character.value.name}.dragonborn.json` || "character.dragonborn.json";
+        link.download = `${character.value.name}.dragonbane.json` || "character.dragonbane.json";
         link.click();
     };
 

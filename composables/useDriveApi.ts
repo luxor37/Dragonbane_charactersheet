@@ -16,37 +16,43 @@ export function useDriveApi() {
         if (!accessToken.value) {
             throw new Error("User is not authenticated");
         }
+
         // Set the OAuth token on the gapi client for authorization.
         gapiInstance.client.setToken({ access_token: accessToken.value });
 
-        // Build file metadata
-        const fileMetadata = {
-            name: `${characterData.name || "character"}.dragonborn.json`,
+        // Convert character data to a JSON string and create a Blob.
+        const fileContent = JSON.stringify(characterData, null, 2);
+        const fileBlob = new Blob([fileContent], { type: "application/json" });
+
+        // Define file metadata.
+        const metadata = {
+            name: `${characterData.name || 'character'}.dragonbane.json`,
             mimeType: "application/json",
         };
 
-        // Convert character data to JSON string.
-        const fileContent = JSON.stringify(characterData, null, 2);
-        const media = {
-            mimeType: "application/json",
-            body: fileContent,
-        };
-        console.log(media)
+        // Build the multipart form data.
+        const formData = new FormData();
+        formData.append(
+            "metadata",
+            new Blob([JSON.stringify(metadata)], { type: "application/json" })
+        );
+        formData.append("file", fileBlob);
+
         try {
-            const response = await gapiInstance.client.drive.files.create({
-                resource: fileMetadata,
-                media: media,
-                fields: "id",
-                name: fileMetadata.name,
-                contentHints: {
-                    thumbnail: {
-                        mimeType: 'application/json'
-                    }
-                },
-                params: { uploadType: "media" }
-            });
-            console.log("File created with ID:", response.result.id);
-            return response.result.id;
+            const response = await fetch(
+                "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true",
+                {
+                    method: "POST",
+                    headers: new Headers({
+                        Authorization: "Bearer " + gapiInstance.auth.getToken().access_token,
+                    }),
+                    body: formData,
+                }
+            );
+
+            const jsonResponse = await response.json();
+            console.log("File created:", jsonResponse);
+            return jsonResponse.id;
         } catch (error) {
             console.error("Error creating file:", error);
             return undefined;
@@ -56,7 +62,7 @@ export function useDriveApi() {
     const updateCharacterFile = async (
         fileId: string,
         characterData: Character
-    ): Promise<any> => {
+    ): Promise<string | undefined> => {
         await initGapiClient();
         const gapiInstance = await waitForGapi();
 
@@ -65,20 +71,40 @@ export function useDriveApi() {
         }
         gapiInstance.client.setToken({ access_token: accessToken.value });
 
+        // Convert character data to a JSON string and create a Blob.
         const fileContent = JSON.stringify(characterData, null, 2);
-        const media = {
+        const fileBlob = new Blob([fileContent], { type: "application/json" });
+
+        // Define file metadata.
+        const metadata = {
+            name: `${characterData.name || "character"}.dragonbane.json`,
             mimeType: "application/json",
-            body: fileContent,
         };
 
+        // Build the multipart form data.
+        const formData = new FormData();
+        formData.append(
+            "metadata",
+            new Blob([JSON.stringify(metadata)], { type: "application/json" })
+        );
+        formData.append("file", fileBlob);
+
         try {
-            const response = await gapiInstance.client.drive.files.update({
-                fileId,
-                media: media,
-                params: { uploadType: "multipart" }
-            });
-            console.log("File updated:", response);
-            return response;
+            const response = await fetch(
+                `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart&supportsAllDrives=true`,
+                {
+                    method: "PATCH", // Use PATCH to update the file.
+                    headers: new Headers({
+                        Authorization:
+                            "Bearer " + gapiInstance.auth.getToken().access_token,
+                    }),
+                    body: formData,
+                }
+            );
+
+            const jsonResponse = await response.json();
+            console.log("File updated:", jsonResponse);
+            return jsonResponse.id;
         } catch (error) {
             console.error("Error updating file:", error);
             return undefined;
@@ -95,7 +121,7 @@ export function useDriveApi() {
             throw new Error("User is not authenticated");
         }
         gapiInstance.client.setToken({ access_token: accessToken.value });
-        const query = "name contains '.dragonborn.json'";
+        const query = "name contains '.dragonbane.json' and trashed = false";
         try {
             const response = await gapiInstance.client.drive.files.list({
                 q: query,
@@ -123,6 +149,7 @@ export function useDriveApi() {
                 fileId,
                 alt: "media",
             });
+            console.warn("LOADED", response)
             const content = response.body;
             return JSON.parse(content) as Character;
         } catch (error) {
