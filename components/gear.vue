@@ -184,97 +184,98 @@ const toggleDeathRoll = (type: "successess" | "failures", index: number) => {
   </div>
 
   <!-- Modal for Adding/Editing a Weapon -->
-  <UModal v-model="isOpen">
-    <UCard
-      :ui="{
-        ring: '',
-        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-      }"
-    >
-      <template #header>
-        <div class="flex items-center justify-between">
-          <h3 class="text-base font-semibold leading-6">
-            {{ isAddWeapon ? "Add Weapon" : "Edit Weapon" }}
-          </h3>
-          <UButton
-            color="gray"
-            variant="ghost"
-            icon="i-heroicons-x-mark-20-solid"
-            class="-my-1"
-            @click="reset"
-          />
+  <UModal v-model:open="isOpen">
+    <template #content>
+      <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-semibold leading-6">
+              {{ isAddWeapon ? "Add Weapon" : "Edit Weapon" }}
+            </h3>
+            <UButton
+              color="neutral"
+              variant="ghost"
+              icon="i-heroicons-x-mark-20-solid"
+              class="-my-1"
+              @click="reset"
+            />
+          </div>
+        </template>
+        <div class="flex flex-col gap-2" v-if="weapon">
+          <div class="flex flex-row items-center gap-2">
+            <div>Name:</div>
+            <UInput v-model="weapon.name" placeholder="Name" />
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Grip:</div>
+            <USelect :items="gripOptions" v-model="weapon.grip" />
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Range:</div>
+            <UInput type="number" v-model="weapon.range" placeholder="Range" />
+            ft
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Strength:</div>
+            <UInput
+              type="number"
+              v-model="weapon.strength"
+              placeholder="Strength"
+            />
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Damage:</div>
+            <!-- Display number of dice first then 'd' then select for dice type -->
+            <NumberInput
+              v-model="weapon.dices"
+              placeholder="Number"
+              class="w-16"
+            />
+            <span>d</span>
+            <USelect :items="diceOptions" v-model="weapon.damage" />
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Durability:</div>
+            <UInput
+              type="number"
+              v-model="weapon.durability"
+              placeholder="Durability"
+            />
+          </div>
+          <div class="flex flex-row items-center gap-2">
+            <div>Features:</div>
+            <USelectMenu
+              :items="weaponFeatureOptions"
+              v-model="selectedWeaponFeatures"
+              multiple
+              label="Select Features"
+            />
+          </div>
+          <div class="flex flex-col">
+            <div>Description:</div>
+            <UInput
+              type="text"
+              v-model="weapon.description"
+              placeholder="Description"
+            />
+          </div>
         </div>
-      </template>
-      <div class="flex flex-col gap-2" v-if="weapon">
-        <div class="flex flex-row items-center gap-2">
-          <div>Name:</div>
-          <UInput v-model="weapon.name" placeholder="Name" />
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Grip:</div>
-          <USelect :options="gripOptions" v-model="weapon.grip" />
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Range:</div>
-          <UInput type="number" v-model="weapon.range" placeholder="Range" /> ft
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Strength:</div>
-          <UInput
-            type="number"
-            v-model="weapon.strength"
-            placeholder="Strength"
-          />
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Damage:</div>
-          <!-- Display number of dice first then 'd' then select for dice type -->
-          <NumberInput
-            v-model="weapon.dices"
-            placeholder="Number"
-            class="w-16"
-          />
-          <span>d</span>
-          <USelect :options="diceOptions" v-model="weapon.damage" />
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Durability:</div>
-          <UInput
-            type="number"
-            v-model="weapon.durability"
-            placeholder="Durability"
-          />
-        </div>
-        <div class="flex flex-row items-center gap-2">
-          <div>Features:</div>
-          <USelectMenu
-            :options="weaponFeatureOptions"
-            v-model="selectedWeaponFeatures"
-            multiple
-            label="Select Features"
-          />
-        </div>
-        <div class="flex flex-col">
-          <div>Description:</div>
-          <UInput
-            type="text"
-            v-model="weapon.description"
-            placeholder="Description"
-          />
-        </div>
-      </div>
-      <template #footer>
-        <div class="flex flex-row gap-2 justify-end">
-          <UButton @click="saveWeapon" :label="isAddWeapon ? 'Add' : 'Edit'" />
-          <UButton
-            v-if="!isAddWeapon"
-            @click="deleteWeapon"
-            label="Delete"
-            variant="outline"
-            color="red"
-          />
-        </div>
-      </template>
-    </UCard>
+        <template #footer>
+          <div class="flex flex-row gap-2 justify-end">
+            <UButton
+              @click="saveWeapon"
+              :label="isAddWeapon ? 'Add' : 'Edit'"
+            />
+            <UButton
+              v-if="!isAddWeapon"
+              @click="deleteWeapon"
+              label="Delete"
+              variant="outline"
+              color="error"
+            />
+          </div>
+        </template>
+      </UCard>
+    </template>
   </UModal>
 </template>

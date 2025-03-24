@@ -119,7 +119,7 @@ const cancelEditing = () => {
             <UButton
               label="Delete"
               variant="outline"
-              color="red"
+              color="error"
               @click="deleteNote(index)"
             />
           </div>

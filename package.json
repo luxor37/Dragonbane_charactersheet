@@ -1,5 +1,5 @@
 {
-  "name": "dargonbane_charactersheet",
+  "name": "dragonbane_charactersheet",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,34 +10,38 @@
     "postinstall": "nuxt prepare"
   },
   "engines": {
-    "node": ">=20.17.0"
+    "node": ">=20.18.1"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/luxor37/Dragonbane_charactersheet.git"
   },
-  "author": "Remi Martel remi.martel.37@gmail.com",
+  "author": {
+    "name": "Remi Martel",
+    "email": "remi.martel.37@gmail.com",
+    "url": "https://rmartel.dev"
+  },
   "license": "MIT",
   "devDependencies": {
     "@nuxt/devtools": "latest",
-    "@types/gapi": "^0.0.47",
-    "@types/gapi.auth2": "^0.0.61",
-    "@types/gapi.client.drive": "^3.0.15",
-    "@vite-pwa/assets-generator": "^0.0.11",
-    "@vite-pwa/nuxt": "^0.1.1",
-    "autoprefixer": "^10.4.16",
-    "nuxt": "^3.7.4",
-    "postcss": "^8.4.31",
-    "tailwindcss": "^3.3.3",
-    "typescript": "^5.7.3",
-    "vue": "^3.3.4",
-    "vue-router": "^4.2.5"
+    "@types/gapi": "0.0.47",
+    "@types/gapi.auth2": "0.0.61",
+    "@types/gapi.client.drive": "3.0.15",
+    "@types/node": "22.13.13",
+    "@vite-pwa/nuxt": "0.10.6",
+    "autoprefixer": "10.4.21",
+    "nuxt": "3.16.1",
+    "typescript": "5.8.2",
+    "vue": "3.5.13",
+    "vue-router": "4.5.0"
   },
   "dependencies": {
-    "@nuxt/ui": "^2.10.0",
-    "@pinia/nuxt": "^0.5.0",
-    "marked": "^15.0.2",
-    "pinia": "^2.1.7",
-    "pinia-plugin-persist": "^1.0.0"
+    "@nuxt/ui": "3.0.1",
+    "@pinia/nuxt": "0.10.1",
+    "@tailwindcss/vite": "^4.0.15",
+    "marked": "15.0.7",
+    "pinia": "3.0.1",
+    "pinia-plugin-persistedstate": "4.2.0",
+    "tailwindcss": "^4.0.15"
   }
 }

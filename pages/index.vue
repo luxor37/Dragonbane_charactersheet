@@ -5,25 +5,36 @@ import { AGES, KINS, PROFESSIONS } from "~/types/sheet";
 const sheetStore = useSheetStore();
 const { character } = storeToRefs(sheetStore);
 
+interface Option {
+  label: string;
+  value: any;
+}
+
 definePageMeta({
   colorMode: "light",
   middleware: "auth",
 });
 
-const professionOptions = PROFESSIONS.map((prof) => ({
-  value: prof,
-  label: prof,
-}));
+const professionOptions = computed((): Option[] =>
+  PROFESSIONS.map((prof) => ({
+    value: prof,
+    label: prof,
+  }))
+);
 
-const kinOptions = KINS.map((k) => ({
-  value: k,
-  label: k,
-}));
+const kinOptions = computed((): Option[] =>
+  KINS.map((k) => ({
+    value: k,
+    label: k,
+  }))
+);
 
-const ageOption = AGES.map((a) => ({
-  value: a,
-  label: a,
-}));
+const ageOption = computed((): Option[] =>
+  AGES.map((a) => ({
+    value: a,
+    label: a,
+  }))
+);
 </script>
 
 <template>
@@ -33,24 +44,22 @@ const ageOption = AGES.map((a) => ({
   <!-- <File /> -->
   <div
     class="flex flex-row flex-wrap md:flex-nowrap gap-4 mx-10 justify-center"
+    v-if="kinOptions.length > 0 && character.kin"
   >
     <div class="md:w-1/3">
       <div class="flex flex-col items-center gap-2">
         <div class="flex flex-row items-center gap-2">
           <label class="text-right">Kin:</label>
-          <USelect :options="kinOptions" v-model="character.kin" />
+          <USelect :items="kinOptions" v-model="character.kin" />
         </div>
         <div class="flex flex-row items-center gap-2">
           <label class="text-right">Age:</label>
-          <USelect :options="ageOption" v-model="character.age" />
+          <USelect :items="ageOption" v-model="character.age" />
         </div>
 
         <div class="flex flex-row items-center gap-2">
           <label class="text-right">Profession:</label>
-          <USelect
-            :options="professionOptions"
-            v-model="character.profession"
-          />
+          <USelect :items="professionOptions" v-model="character.profession" />
         </div>
 
         <div>

@@ -1,4 +1,6 @@
 import { isDevelopment } from "std-env";
+import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from 'url';
 
 const appTitle = "DragonBane - Sheet"
 
@@ -6,7 +8,7 @@ const appDescription = "Dragon Bane TTRPG - Character Sheet Editor"
 
 export default defineNuxtConfig({
   ssr: false,
-  devtools: { enabled: false },
+  devtools: { enabled: process.env.NUXT_DEV_TOOLS === "true" || false },
 
   app: {
     head: {
@@ -69,23 +71,16 @@ export default defineNuxtConfig({
     '@nuxt/ui'
   ],
 
-  colorMode: {
-    preference: 'light'
-  },
+  // colorMode: {
+  //   preference: 'light'
+  // },
 
   ui: {
-    global: true,
-  },
-
-  css: ['~/assets/css/main.css'],
-
-  postcss: {
-    plugins: {
-      'postcss-import': {},
-      'tailwindcss/nesting': {},
-      tailwindcss: {},
-      autoprefixer: {},
-    },
+    colorMode: false,
+    theme: {
+      colors: ['primary', 'error'],
+      transitions: false
+    }
   },
 
   plugins: [
@@ -93,11 +88,27 @@ export default defineNuxtConfig({
     { src: '~/plugins/gsi.client.ts', mode: 'client' }
   ],
 
+  build: {
+    transpile: ['@vite-pwa/nuxt']
+  },
+
+  css: ['~/assets/css/main.css'],
+
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+    //   resolve: {
+    //     alias: {
+    //       '@vite-pwa/nuxt': fileURLToPath(new URL('./node_modules/@vite-pwa/nuxt/dist/module.mjs', import.meta.url))
+    //     }
+    //   }
+  },
+
   pwa: {
     mode: isDevelopment ? "development" : "production",
     scope: "/",
-    filename: "sw.ts",
-    strategies: "injectManifest",
+    strategies: "generateSW",
     includeManifestIcons: false,
     manifest: {
       name: `${appTitle}`,
@@ -119,12 +130,16 @@ export default defineNuxtConfig({
       start_url: "/",
       display: "fullscreen",
     },
+    registerType: 'autoUpdate',
     devOptions: {
       enabled: isDevelopment,
       type: "module",
     },
     client: {
       installPrompt: true,
+    },
+    workbox: {
+      cleanupOutdatedCaches: true,
     },
   },
 

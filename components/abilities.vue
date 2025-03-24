@@ -301,302 +301,310 @@ const toggleRequirement = (req: (typeof SPELL_REQUIREMENTS)[number]) => {
   </div>
 
   <!-- Modal for Adding/Editing an Item -->
-  <UModal v-model="isModalOpen">
-    <UCard>
-      <template #header>
-        <h3 class="text-lg font-bold">
-          {{ isEditing ? "Edit " : "Add " }}
-          {{ activeItemType === "ability" ? "Ability" : "Spell" }}
-        </h3>
-        <!-- Second-level tabs: Preset vs. Custom (only when not editing) -->
-        <div v-if="!isEditing" class="mt-2">
-          <div v-if="activeItemType === 'ability'" class="flex border-b">
-            <button
-              class="px-4 py-2 focus:outline-none"
-              :class="{
-                'border-b-2 border-blue-500 font-bold': usePresetAbility,
-              }"
-              @click="usePresetAbility = true"
-            >
-              Heroic Ability
-            </button>
-            <button
-              class="px-4 py-2 focus:outline-none"
-              :class="{
-                'border-b-2 border-blue-500 font-bold': !usePresetAbility,
-              }"
-              @click="usePresetAbility = false"
-            >
-              Custom Ability
-            </button>
-          </div>
-          <div v-else class="flex border-b">
-            <button
-              class="px-4 py-2 focus:outline-none"
-              :class="{
-                'border-b-2 border-blue-500 font-bold': usePresetSpell,
-              }"
-              @click="usePresetSpell = true"
-            >
-              Preset Spell
-            </button>
-            <button
-              class="px-4 py-2 focus:outline-none"
-              :class="{
-                'border-b-2 border-blue-500 font-bold': !usePresetSpell,
-              }"
-              @click="usePresetSpell = false"
-            >
-              Custom Spell
-            </button>
-          </div>
-        </div>
-      </template>
-
-      <div class="flex flex-col gap-4">
-        <!-- Content for Ability -->
-        <template v-if="activeItemType === 'ability'">
-          <template v-if="usePresetAbility">
-            <div>
-              <label for="preset-select-ability" class="font-bold">
-                Select Heroic Ability:
-              </label>
-              <select
-                id="preset-select-ability"
-                v-model.number="selectedPresetAbilityIndex"
-                @change="selectPresetAbility"
-                class="border border-gray-300 rounded-md p-2 w-full"
+  <UModal v-model:open="isModalOpen">
+    <template #content>
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-bold">
+            {{ isEditing ? "Edit " : "Add " }}
+            {{ activeItemType === "ability" ? "Ability" : "Spell" }}
+          </h3>
+          <!-- Second-level tabs: Preset vs. Custom (only when not editing) -->
+          <div v-if="!isEditing" class="mt-2">
+            <div v-if="activeItemType === 'ability'" class="flex border-b">
+              <button
+                class="px-4 py-2 focus:outline-none"
+                :class="{
+                  'border-b-2 border-blue-500 font-bold': usePresetAbility,
+                }"
+                @click="usePresetAbility = true"
               >
-                <option disabled value="">Select an ability</option>
-                <option
-                  v-for="(preset, index) in HEROIC_ABILITIES"
-                  :key="preset.name"
-                  :value="index"
-                >
-                  {{ preset.name }}
-                  <span v-if="preset.cost && preset.cost > 0">
-                    ({{ preset.cost }} w)
-                  </span>
-                </option>
-              </select>
-              <template v-if="selectedPresetAbilityIndex !== null">
-                <CardAbility
-                  v-bind="HEROIC_ABILITIES[selectedPresetAbilityIndex]"
-                />
-              </template>
+                Heroic Ability
+              </button>
+              <button
+                class="px-4 py-2 focus:outline-none"
+                :class="{
+                  'border-b-2 border-blue-500 font-bold': !usePresetAbility,
+                }"
+                @click="usePresetAbility = false"
+              >
+                Custom Ability
+              </button>
             </div>
-          </template>
-          <template v-else>
-            <div class="flex flex-row items-center gap-2">
-              <label for="ability-name" class="font-bold">Name:</label>
-              <UInput
-                id="ability-name"
-                type="text"
-                v-model="abilityForm.name"
-                placeholder="Ability Name"
-              />
+            <div v-else class="flex border-b">
+              <button
+                class="px-4 py-2 focus:outline-none"
+                :class="{
+                  'border-b-2 border-blue-500 font-bold': usePresetSpell,
+                }"
+                @click="usePresetSpell = true"
+              >
+                Preset Spell
+              </button>
+              <button
+                class="px-4 py-2 focus:outline-none"
+                :class="{
+                  'border-b-2 border-blue-500 font-bold': !usePresetSpell,
+                }"
+                @click="usePresetSpell = false"
+              >
+                Custom Spell
+              </button>
             </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="ability-cost" class="font-bold">Cost:</label>
-              <NumberInput
-                id="ability-cost"
-                v-model="abilityForm.cost"
-                placeholder="Cost"
-                width-class="w-20"
-                :min="0"
-              />
-            </div>
-            <div class="flex flex-col">
-              <label for="ability-description" class="font-bold">
-                Description:
-              </label>
-              <textarea
-                id="ability-description"
-                v-model="abilityForm.description"
-                placeholder="Describe the ability"
-                class="border border-gray-300 rounded-md p-2 w-full"
-              />
-            </div>
-          </template>
+          </div>
         </template>
 
-        <!-- Content for Spell -->
-        <template v-else>
-          <template v-if="usePresetSpell">
-            <div>
-              <label for="preset-select-spell" class="font-bold">
-                Select Preset Spell:
-              </label>
-              <select
-                id="preset-select-spell"
-                v-model="selectedPresetSpellValue"
-                @change="onPresetSpellChange"
-                class="border border-gray-300 rounded-md p-2 w-full"
-              >
-                <option disabled value="">Select a spell</option>
-                <template
-                  v-for="group in allPresetSpells"
-                  :key="group.category"
+        <div class="flex flex-col gap-4">
+          <!-- Content for Ability -->
+          <template v-if="activeItemType === 'ability'">
+            <template v-if="usePresetAbility">
+              <div>
+                <label for="preset-select-ability" class="font-bold">
+                  Select Heroic Ability:
+                </label>
+                <select
+                  id="preset-select-ability"
+                  v-model.number="selectedPresetAbilityIndex"
+                  @change="selectPresetAbility"
+                  class="border border-gray-300 rounded-md p-2 w-full"
                 >
-                  <optgroup :label="group.category">
-                    <option
-                      v-for="(spell, index) in group.spells"
-                      :key="spell.name"
-                      :value="group.category + '-' + index"
-                    >
-                      {{ spell.name }} (Rank: {{ spell.rank }})
-                    </option>
-                  </optgroup>
+                  <option disabled value="">Select an ability</option>
+                  <option
+                    v-for="(preset, index) in HEROIC_ABILITIES"
+                    :key="preset.name"
+                    :value="index"
+                  >
+                    {{ preset.name }}
+                    <span v-if="preset.cost && preset.cost > 0">
+                      ({{ preset.cost }} w)
+                    </span>
+                  </option>
+                </select>
+                <template v-if="selectedPresetAbilityIndex !== null">
+                  <CardAbility
+                    v-bind="HEROIC_ABILITIES[selectedPresetAbilityIndex]"
+                  />
                 </template>
-              </select>
-              <template v-if="selectedPresetSpellValue">
-                <CardSpell v-bind="spellForm" />
-              </template>
-            </div>
-          </template>
-          <template v-else>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-name" class="font-bold">Name:</label>
-              <UInput
-                id="spell-name"
-                type="text"
-                v-model="spellForm.name"
-                placeholder="Spell Name"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-rank" class="font-bold">Rank:</label>
-              <NumberInput
-                id="spell-rank"
-                v-model="spellForm.rank"
-                placeholder="Rank"
-                width-class="w-14"
-                :min="1"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-prerequisite" class="font-bold"
-                >Prerequisite:</label
-              >
-              <UInput
-                id="spell-prerequisite"
-                type="text"
-                v-model="spellForm.prerequisite"
-                placeholder="Spell Prerequisite"
-              />
-            </div>
-            <!-- Toggle buttons for predefined requirements -->
-            <div class="flex flex-col">
-              <label class="font-bold">Requirement:</label>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  v-for="req in SPELL_REQUIREMENTS"
-                  :key="req"
-                  @click.prevent="toggleRequirement(req)"
-                  :class="{
-                    'bg-blue-500 text-white':
-                      spellForm.requirement.includes(req),
-                    'bg-gray-200 text-black':
-                      !spellForm.requirement.includes(req),
-                  }"
-                  class="px-2 py-1 rounded"
-                >
-                  {{ req }}
-                </button>
               </div>
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-casting-time" class="font-bold"
-                >Casting Time:</label
-              >
-              <UInput
-                id="spell-casting-time"
-                type="text"
-                v-model="spellForm.casting_time"
-                placeholder="Casting Time"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-range" class="font-bold">Range:</label>
-              <UInput
-                id="spell-range"
-                type="text"
-                v-model="spellForm.range"
-                placeholder="Spell Range"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label for="spell-duration" class="font-bold">Duration:</label>
-              <UInput
-                id="spell-duration"
-                type="text"
-                v-model="spellForm.duration"
-                placeholder="Spell Duration"
-              />
-            </div>
-            <div class="flex flex-col">
-              <label for="spell-description" class="font-bold"
-                >Description:</label
-              >
-              <textarea
-                id="spell-description"
-                v-model="spellForm.description"
-                placeholder="Describe the spell"
-                class="border border-gray-300 rounded-md p-2 w-full"
-              />
-            </div>
+            </template>
+            <template v-else>
+              <div class="flex flex-row items-center gap-2">
+                <label for="ability-name" class="font-bold">Name:</label>
+                <UInput
+                  id="ability-name"
+                  type="text"
+                  v-model="abilityForm.name"
+                  placeholder="Ability Name"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="ability-cost" class="font-bold">Cost:</label>
+                <NumberInput
+                  id="ability-cost"
+                  v-model="abilityForm.cost"
+                  placeholder="Cost"
+                  width-class="w-20"
+                  :min="0"
+                />
+              </div>
+              <div class="flex flex-col">
+                <label for="ability-description" class="font-bold">
+                  Description:
+                </label>
+                <textarea
+                  id="ability-description"
+                  v-model="abilityForm.description"
+                  placeholder="Describe the ability"
+                  class="border border-gray-300 rounded-md p-2 w-full"
+                />
+              </div>
+            </template>
           </template>
-        </template>
-      </div>
 
-      <template #footer>
-        <div class="flex flex-row gap-2 justify-between">
-          <UButton
-            v-if="isEditing"
-            label="Delete"
-            variant="outline"
-            color="red"
-            @click="
-              () => {
-                if (itemIndex !== null) deleteItem(itemIndex);
-                closeItemModal();
-              }
-            "
-          />
-          <div class="flex flex-row gap-2">
-            <UButton label="Save" @click="saveItem" />
-            <UButton label="Cancel" variant="outline" @click="closeItemModal" />
-          </div>
+          <!-- Content for Spell -->
+          <template v-else>
+            <template v-if="usePresetSpell">
+              <div>
+                <label for="preset-select-spell" class="font-bold">
+                  Select Preset Spell:
+                </label>
+                <select
+                  id="preset-select-spell"
+                  v-model="selectedPresetSpellValue"
+                  @change="onPresetSpellChange"
+                  class="border border-gray-300 rounded-md p-2 w-full"
+                >
+                  <option disabled value="">Select a spell</option>
+                  <template
+                    v-for="group in allPresetSpells"
+                    :key="group.category"
+                  >
+                    <optgroup :label="group.category">
+                      <option
+                        v-for="(spell, index) in group.spells"
+                        :key="spell.name"
+                        :value="group.category + '-' + index"
+                      >
+                        {{ spell.name }} (Rank: {{ spell.rank }})
+                      </option>
+                    </optgroup>
+                  </template>
+                </select>
+                <template v-if="selectedPresetSpellValue">
+                  <CardSpell v-bind="spellForm" />
+                </template>
+              </div>
+            </template>
+            <template v-else>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-name" class="font-bold">Name:</label>
+                <UInput
+                  id="spell-name"
+                  type="text"
+                  v-model="spellForm.name"
+                  placeholder="Spell Name"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-rank" class="font-bold">Rank:</label>
+                <NumberInput
+                  id="spell-rank"
+                  v-model="spellForm.rank"
+                  placeholder="Rank"
+                  width-class="w-14"
+                  :min="1"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-prerequisite" class="font-bold"
+                  >Prerequisite:</label
+                >
+                <UInput
+                  id="spell-prerequisite"
+                  type="text"
+                  v-model="spellForm.prerequisite"
+                  placeholder="Spell Prerequisite"
+                />
+              </div>
+              <!-- Toggle buttons for predefined requirements -->
+              <div class="flex flex-col">
+                <label class="font-bold">Requirement:</label>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="req in SPELL_REQUIREMENTS"
+                    :key="req"
+                    @click.prevent="toggleRequirement(req)"
+                    :class="{
+                      'bg-blue-500 text-white':
+                        spellForm.requirement.includes(req),
+                      'bg-gray-200 text-black':
+                        !spellForm.requirement.includes(req),
+                    }"
+                    class="px-2 py-1 rounded"
+                  >
+                    {{ req }}
+                  </button>
+                </div>
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-casting-time" class="font-bold"
+                  >Casting Time:</label
+                >
+                <UInput
+                  id="spell-casting-time"
+                  type="text"
+                  v-model="spellForm.casting_time"
+                  placeholder="Casting Time"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-range" class="font-bold">Range:</label>
+                <UInput
+                  id="spell-range"
+                  type="text"
+                  v-model="spellForm.range"
+                  placeholder="Spell Range"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label for="spell-duration" class="font-bold">Duration:</label>
+                <UInput
+                  id="spell-duration"
+                  type="text"
+                  v-model="spellForm.duration"
+                  placeholder="Spell Duration"
+                />
+              </div>
+              <div class="flex flex-col">
+                <label for="spell-description" class="font-bold"
+                  >Description:</label
+                >
+                <textarea
+                  id="spell-description"
+                  v-model="spellForm.description"
+                  placeholder="Describe the spell"
+                  class="border border-gray-300 rounded-md p-2 w-full"
+                />
+              </div>
+            </template>
+          </template>
         </div>
-      </template>
-    </UCard>
+
+        <template #footer>
+          <div class="flex flex-row gap-2 justify-between">
+            <UButton
+              v-if="isEditing"
+              label="Delete"
+              variant="outline"
+              color="error"
+              @click="
+                () => {
+                  if (itemIndex !== null) deleteItem(itemIndex);
+                  closeItemModal();
+                }
+              "
+            />
+            <div class="flex flex-row gap-2">
+              <UButton label="Save" @click="saveItem" />
+              <UButton
+                label="Cancel"
+                variant="outline"
+                @click="closeItemModal"
+              />
+            </div>
+          </div>
+        </template>
+      </UCard>
+    </template>
   </UModal>
 
   <!-- Description Modal -->
-  <UModal v-model="isDescriptionModalOpen">
-    <UCard>
-      <template #header>
-        <h3 class="text-lg font-bold">
-          {{ selectedItem?.name || "Item Description" }}
-        </h3>
-      </template>
-      <div class="prose">
-        <CardAbility
-          v-if="activeItemType === 'ability' && selectedItem"
-          v-bind="(selectedItem as Ability)"
-        />
-        <CardSpell
-          v-else-if="activeItemType === 'spell' && selectedItem"
-          v-bind="(selectedItem as Spell)"
-        />
-      </div>
-      <template #footer>
-        <UButton
-          label="Close"
-          variant="outline"
-          @click="isDescriptionModalOpen = false"
-        />
-      </template>
-    </UCard>
+  <UModal v-model:open="isDescriptionModalOpen">
+    <template #content>
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-bold">
+            {{ selectedItem?.name || "Item Description" }}
+          </h3>
+        </template>
+        <div class="prose">
+          <CardAbility
+            v-if="activeItemType === 'ability' && selectedItem"
+            v-bind="(selectedItem as Ability)"
+          />
+          <CardSpell
+            v-else-if="activeItemType === 'spell' && selectedItem"
+            v-bind="(selectedItem as Spell)"
+          />
+        </div>
+        <template #footer>
+          <UButton
+            label="Close"
+            variant="outline"
+            @click="isDescriptionModalOpen = false"
+          />
+        </template>
+      </UCard>
+    </template>
   </UModal>
 </template>

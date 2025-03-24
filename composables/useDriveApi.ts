@@ -31,13 +31,13 @@ export function useDriveApi() {
             mimeType: "application/json",
             body: fileContent,
         };
-
+        console.log(media)
         try {
             const response = await gapiInstance.client.drive.files.create({
                 resource: fileMetadata,
                 media: media,
                 fields: "id",
-                name: fileMetadata.name + '.dragonborn.json',
+                name: fileMetadata.name,
                 contentHints: {
                     thumbnail: {
                         mimeType: 'application/json'

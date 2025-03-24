@@ -151,91 +151,97 @@ const openDescriptionModal = (description: string) => {
   </div>
 
   <!-- Secondary Skill Modal -->
-  <UModal v-model="isSkillModalOpen">
-    <UCard>
-      <template #header>
-        <h3 class="text-lg font-bold">
-          {{ isEditingSkill ? "Edit Skill" : "Add Skill" }}
-        </h3>
-      </template>
-      <div class="flex flex-col gap-4">
-        <!-- Name -->
-        <div class="flex flex-row items-center gap-2">
-          <label for="skill-name" class="font-bold">Name:</label>
-          <UInput
-            id="skill-name"
-            type="text"
-            v-model="skillForm.name"
-            placeholder="Skill Name"
-          />
-        </div>
+  <UModal v-model:open="isSkillModalOpen">
+    <template #content>
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-bold">
+            {{ isEditingSkill ? "Edit Skill" : "Add Skill" }}
+          </h3>
+        </template>
+        <div class="flex flex-col gap-4">
+          <!-- Name -->
+          <div class="flex flex-row items-center gap-2">
+            <label for="skill-name" class="font-bold">Name:</label>
+            <UInput
+              id="skill-name"
+              type="text"
+              v-model="skillForm.name"
+              placeholder="Skill Name"
+            />
+          </div>
 
-        <!-- Check -->
-        <div class="flex flex-row items-center gap-2">
-          <label for="skill-check" class="font-bold">Check:</label>
-          <NumberInput
-            id="skill-check"
-            v-model="skillForm.skill.check"
-            placeholder="Check"
-            width-class="w-20"
-            :min="0"
-          />
-        </div>
+          <!-- Check -->
+          <div class="flex flex-row items-center gap-2">
+            <label for="skill-check" class="font-bold">Check:</label>
+            <NumberInput
+              id="skill-check"
+              v-model="skillForm.skill.check"
+              placeholder="Check"
+              width-class="w-20"
+              :min="0"
+            />
+          </div>
 
-        <!-- Description -->
-        <div class="flex flex-col">
-          <label for="skill-description" class="font-bold">Description:</label>
-          <UTextarea
-            id="skill-description"
-            v-model="skillForm.description"
-            placeholder="Describe the skill"
-            :rows="20"
-          />
-        </div>
-      </div>
-      <template #footer>
-        <div class="flex flex-row gap-2 justify-between">
-          <!-- Delete Button (only in edit mode) -->
-          <UButton
-            v-if="isEditingSkill"
-            label="Delete"
-            variant="outline"
-            color="red"
-            @click="
-              () => {
-                if (skillIndex !== null) deleteSkill(skillIndex);
-                closeSkillModal();
-              }
-            "
-          />
-          <div class="flex flex-row gap-2">
-            <!-- Save and Cancel Buttons -->
-            <UButton label="Save" @click="saveSkill" />
-            <UButton
-              label="Cancel"
-              variant="outline"
-              @click="closeSkillModal"
+          <!-- Description -->
+          <div class="flex flex-col">
+            <label for="skill-description" class="font-bold"
+              >Description:</label
+            >
+            <UTextarea
+              id="skill-description"
+              v-model="skillForm.description"
+              placeholder="Describe the skill"
+              :rows="20"
             />
           </div>
         </div>
-      </template>
-    </UCard>
+        <template #footer>
+          <div class="flex flex-row gap-2 justify-between">
+            <!-- Delete Button (only in edit mode) -->
+            <UButton
+              v-if="isEditingSkill"
+              label="Delete"
+              variant="outline"
+              color="error"
+              @click="
+                () => {
+                  if (skillIndex !== null) deleteSkill(skillIndex);
+                  closeSkillModal();
+                }
+              "
+            />
+            <div class="flex flex-row gap-2">
+              <!-- Save and Cancel Buttons -->
+              <UButton label="Save" @click="saveSkill" />
+              <UButton
+                label="Cancel"
+                variant="outline"
+                @click="closeSkillModal"
+              />
+            </div>
+          </div>
+        </template>
+      </UCard>
+    </template>
   </UModal>
 
   <!-- Description Modal -->
-  <UModal v-model="isDescriptionModalOpen">
-    <UCard>
-      <template #header>
-        <h3 class="text-lg font-bold">Skill Description</h3>
-      </template>
-      <div class="prose" v-html="marked(selectedDescription)"></div>
-      <template #footer>
-        <UButton
-          label="Close"
-          variant="outline"
-          @click="isDescriptionModalOpen = false"
-        />
-      </template>
-    </UCard>
+  <UModal v-model:open="isDescriptionModalOpen">
+    <template #content>
+      <UCard>
+        <template #header>
+          <h3 class="text-lg font-bold">Skill Description</h3>
+        </template>
+        <div class="prose" v-html="marked(selectedDescription)"></div>
+        <template #footer>
+          <UButton
+            label="Close"
+            variant="outline"
+            @click="isDescriptionModalOpen = false"
+          />
+        </template>
+      </UCard>
+    </template>
   </UModal>
 </template>

@@ -23,7 +23,7 @@ const companionForm = ref({
 
 // Dice options
 const diceOptions = DICE_VALUES.map((value) => ({
-  value,
+  value: value,
   label: value,
 }));
 
@@ -107,130 +107,133 @@ const closeCompanionModal = () => {
     </div>
 
     <!-- Companion Modal -->
-    <UModal v-model="isCompanionModalOpen">
-      <UCard>
-        <template #header>
-          <h3 class="text-lg font-bold">
-            {{ isEditingCompanion ? "Edit Companion" : "Add Companion" }}
-          </h3>
-        </template>
-        <div class="flex flex-col gap-4">
-          <!-- Name -->
-          <div class="flex flex-row items-center gap-2">
-            <label for="companion-name" class="font-bold">Name:</label>
-            <UInput
-              id="companion-name"
-              type="text"
-              v-model="companionForm.name"
-              placeholder="Companion Name"
-            />
-          </div>
-
-          <!-- Health -->
-          <div class="flex flex-row items-center gap-2">
-            <label class="font-bold">Health:</label>
-            <NumberInput
-              v-model="companionForm.health.remaining"
-              placeholder="Remaining"
-              width-class="w-14"
-              :min="0"
-            />
-            /
-            <NumberInput
-              v-model="companionForm.health.total"
-              placeholder="Total"
-              width-class="w-14"
-              :min="0"
-            />
-          </div>
-
-          <!-- Attack -->
-          <div class="flex flex-row items-center gap-2">
-            <label class="font-bold">Attack:</label>
-            <USelect
-              :options="diceOptions"
-              v-model="companionForm.attack"
-              placeholder="Select Attack Dice"
-            />
-          </div>
-
-          <!-- Stats -->
-          <div class="grid grid-cols-2 gap-2">
+    <UModal v-model:open="isCompanionModalOpen">
+      <template #content>
+        <UCard>
+          <template #header>
+            <h3 class="text-lg font-bold">
+              {{ isEditingCompanion ? "Edit Companion" : "Add Companion" }}
+            </h3>
+          </template>
+          <div class="flex flex-col gap-4">
+            <!-- Name -->
             <div class="flex flex-row items-center gap-2">
-              <label class="font-bold">Awareness:</label>
+              <label for="companion-name" class="font-bold">Name:</label>
+              <UInput
+                id="companion-name"
+                type="text"
+                v-model="companionForm.name"
+                placeholder="Companion Name"
+              />
+            </div>
+
+            <!-- Health -->
+            <div class="flex flex-row items-center gap-2">
+              <label class="font-bold">Health:</label>
               <NumberInput
-                v-model="companionForm.awareness"
-                placeholder="Awareness"
+                v-model="companionForm.health.remaining"
+                placeholder="Remaining"
+                width-class="w-14"
+                :min="0"
+              />
+              /
+              <NumberInput
+                v-model="companionForm.health.total"
+                placeholder="Total"
                 width-class="w-14"
                 :min="0"
               />
             </div>
-            <div class="flex flex-row items-center gap-2">
-              <label class="font-bold">Evade:</label>
-              <NumberInput
-                v-model="companionForm.evade"
-                placeholder="Evade"
-                width-class="w-14"
-                :min="0"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label class="font-bold">Sneaking:</label>
-              <NumberInput
-                v-model="companionForm.sneaking"
-                placeholder="Sneaking"
-                width-class="w-14"
-                :min="0"
-              />
-            </div>
-            <div class="flex flex-row items-center gap-2">
-              <label class="font-bold">Movement:</label>
-              <NumberInput
-                v-model="companionForm.movement"
-                placeholder="Movement"
-                width-class="w-14"
-                :min="0"
-              />
-            </div>
-          </div>
 
-          <!-- Notes -->
-          <div>
-            <label class="font-bold">Notes:</label>
-            <textarea
-              v-model="companionForm.notes[0]"
-              placeholder="Companion Notes"
-              class="border border-gray-300 rounded-md p-2 w-full"
-            />
+            <!-- Attack -->
+            <div class="flex flex-row items-center gap-2">
+              <label class="font-bold">Attack:</label>
+              <USelect
+                :items="diceOptions"
+                v-model="companionForm.attack"
+                placeholder="Select Attack Dice"
+              />
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 gap-2">
+              <div class="flex flex-row items-center gap-2">
+                <label class="font-bold">Awareness:</label>
+                <NumberInput
+                  v-model="companionForm.awareness"
+                  placeholder="Awareness"
+                  width-class="w-14"
+                  :min="0"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label class="font-bold">Evade:</label>
+                <NumberInput
+                  v-model="companionForm.evade"
+                  placeholder="Evade"
+                  width-class="w-14"
+                  :min="0"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label class="font-bold">Sneaking:</label>
+                <NumberInput
+                  v-model="companionForm.sneaking"
+                  placeholder="Sneaking"
+                  width-class="w-14"
+                  :min="0"
+                />
+              </div>
+              <div class="flex flex-row items-center gap-2">
+                <label class="font-bold">Movement:</label>
+                <NumberInput
+                  v-model="companionForm.movement"
+                  placeholder="Movement"
+                  width-class="w-14"
+                  :min="0"
+                />
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div>
+              <label class="font-bold">Notes:</label>
+              <textarea
+                v-model="companionForm.notes[0]"
+                placeholder="Companion Notes"
+                class="border border-gray-300 rounded-md p-2 w-full"
+              />
+            </div>
           </div>
-        </div>
-        <template #footer>
-          <div class="flex flex-row gap-2 justify-between">
-            <!-- Delete Button (only in edit mode) -->
-            <UButton
-              v-if="isEditingCompanion"
-              label="Delete"
-              variant="outline"
-              color="red"
-              @click="
-                () => {
-                  if (companionIndex !== null) deleteCompanion(companionIndex);
-                  closeCompanionModal();
-                }
-              "
-            />
-            <div class="flex flex-row gap-2">
-              <!-- Save and Cancel Buttons -->
-              <UButton label="Save" @click="saveCompanion" />
+          <template #footer>
+            <div class="flex flex-row gap-2 justify-between">
+              <!-- Delete Button (only in edit mode) -->
               <UButton
-                label="Cancel"
+                v-if="isEditingCompanion"
+                label="Delete"
                 variant="outline"
-                @click="closeCompanionModal"
+                color="error"
+                @click="
+                  () => {
+                    if (companionIndex !== null)
+                      deleteCompanion(companionIndex);
+                    closeCompanionModal();
+                  }
+                "
               />
+              <div class="flex flex-row gap-2">
+                <!-- Save and Cancel Buttons -->
+                <UButton label="Save" @click="saveCompanion" />
+                <UButton
+                  label="Cancel"
+                  variant="outline"
+                  @click="closeCompanionModal"
+                />
+              </div>
             </div>
-          </div>
-        </template>
-      </UCard>
+          </template>
+        </UCard>
+      </template>
     </UModal>
   </div>
 </template>
